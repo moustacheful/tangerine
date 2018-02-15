@@ -4,7 +4,7 @@ import qs from "qs";
 import moment from "moment";
 
 import "./index.css";
-import "fullcalendar-reactwrapper/dist/css/fullcalendar.min.css";
+import "fullcalendar/dist/fullcalendar.css";
 import App from "./App";
 import extractState from "./lib/state-extractor";
 
