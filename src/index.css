@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+#tangerine {
+	position: fixed;
+	top: 40px;
+	left: 0;
+	width: 100%;
+	padding-top: 20px;
+}
+
+#tangerine.is-expanded {
+	background: white;
+	height: calc(100vh - 40px) ;
+}
+
+#tangerine aside {
+	box-sizing: border-box;
+	width: 350px;
+	padding: 20px;
+	padding-top: 60px;
+	text-align: left;
+}
+
+#tangerine input.form-control,
+#tangerine textarea.form-control
+ {
+	width: 100%;
+	box-sizing: border-box;
+  padding: 15px 10px;
+}
+
+#tangerine select.form-control {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#tangerine textarea.form-control {
+	padding: 10px;
+	height: 150px;
+}
+#tangerine .btn-toggle {
+	position: absolute;
+	top: 0px;
+}
+
+.fc-event.event-editable {
+	border: 1px dashed grey;
+	color: #666;
+	background: #fafafa;
+}
+
+.fc-event.event-editable.fc-event:hover {
+	color: #666 !important;
+	background: #eaeaea;
+}
+
+#fullcalendar {
+	max-width: 1000px;
+	flex: 1;
+}
+
+.flex-container {
+	display: flex;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
