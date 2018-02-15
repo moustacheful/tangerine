@@ -20,9 +20,10 @@ class App extends Component {
 	render() {
 		return (
 			<div
-				className="App"
 				id="tangerine"
-				className={this.state.collapsed ? "is-collapsed" : "is-expanded"}
+				className={
+					"app" + " " + this.state.collapsed ? "is-collapsed" : "is-expanded"
+				}
 			>
 				<button className="btn-toggle btn btn-primary" onClick={this.toggle}>
 					{this.state.collapsed ? "Ver" : "Ocultar"} agenda

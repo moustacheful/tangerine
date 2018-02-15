@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React from "react";
 import autobind from "autobind-decorator";
 import FullCalendar from "./FullCalendar";
