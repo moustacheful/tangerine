@@ -18,13 +18,12 @@ class App extends Component {
 	}
 
 	render() {
+		const collapsedClass = this.state.collapsed
+			? "is-collapsed"
+			: "is-expanded";
+
 		return (
-			<div
-				id="tangerine"
-				className={
-					"app" + " " + this.state.collapsed ? "is-collapsed" : "is-expanded"
-				}
-			>
+			<div id="tangerine" className={`app ${collapsedClass}`}>
 				<button className="btn-toggle btn btn-primary" onClick={this.toggle}>
 					{this.state.collapsed ? "Ver" : "Ocultar"} agenda
 				</button>
