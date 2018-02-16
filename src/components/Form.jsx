@@ -7,7 +7,9 @@ class Form extends React.Component {
 	state = { tasks: [], timeMap: {}, formData: {} };
 
 	componentDidMount() {
-		if (this.firstInput) this.firstInput.focus();
+		if (this.firstInput) {
+			requestAnimationFrame(() => this.firstInput.focus());
+		}
 
 		this.getTasksForProject(302);
 
@@ -87,7 +89,7 @@ class Form extends React.Component {
 					<label htmlFor="">Nombre tarea</label>
 
 					<input
-						ref={el => this.firstInput}
+						ref={el => (this.firstInput = el)}
 						type="text"
 						className="form-control"
 						placeholder="Título"
