@@ -9,12 +9,12 @@ body {
 	top: 40px;
 	left: 0;
 	width: 100%;
-	padding-top: 20px;
+	padding: 20px 0px;
 }
 
-#tangerine.is-expanded {
+#tangerine .pane {
 	background: white;
-	height: calc(100vh - 40px) ;
+	animation: slide-down .3s ease both;
 }
 
 #tangerine aside {
@@ -44,7 +44,9 @@ body {
 }
 #tangerine .btn-toggle {
 	position: absolute;
+	display: block;
 	top: 0px;
+	right: 0px;
 }
 
 .fc-event.event-editable {
@@ -69,3 +71,9 @@ body {
 	margin: 0 auto;
 }
 
+@keyframes slide-down {
+	0% {
+		opacity: 0;
+		transform: translateY(-100px);
+	}
+}

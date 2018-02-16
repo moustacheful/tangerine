@@ -29,25 +29,27 @@ class App extends Component {
 				</button>
 
 				{!this.state.collapsed &&
-					<div className="flex-container">
-						<Calendar
-							calendarData={this.props.log}
-							editableEvent={this.state.editableEvent}
-							setEditableEvent={this.setEditableEvent}
-						/>
+					<div className="pane">
+						<div className="flex-container">
+							<Calendar
+								calendarData={this.props.log}
+								editableEvent={this.state.editableEvent}
+								setEditableEvent={this.setEditableEvent}
+							/>
 
-						{this.state.editableEvent
-							? <aside>
-									<Form
-										eventData={this.state.editableEvent}
-										setEditableEvent={this.setEditableEvent}
-									/>
-								</aside>
-							: <aside>
-									<div className="well well-xs">
-										Seleccionar un rango para trackear
-									</div>
-								</aside>}
+							{this.state.editableEvent
+								? <aside>
+										<Form
+											eventData={this.state.editableEvent}
+											setEditableEvent={this.setEditableEvent}
+										/>
+									</aside>
+								: <aside>
+										<div className="well well-xs">
+											Seleccionar un rango para trackear
+										</div>
+									</aside>}
+						</div>
 					</div>}
 			</div>
 		);
