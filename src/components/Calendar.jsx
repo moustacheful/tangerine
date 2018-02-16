@@ -56,6 +56,7 @@ class Calendar extends React.Component {
 
 		return (
 			<FullCalendar
+				allDaySlot={false}
 				visibleRange={undefined}
 				viewRender={view => {
 					// should probably check here and keep state of the range being seen
