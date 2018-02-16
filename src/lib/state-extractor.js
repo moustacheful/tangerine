@@ -2,8 +2,9 @@ import $ from "jquery";
 import axios from "./axios";
 import moment from "moment";
 
-function extractLogDataFromMarkup(selector) {
-  return selector
+function extractLogDataFromMarkup(doc) {
+  return doc
+    .find("table.table-striped tbody tr")
     .map((i, el) => {
       const [
         duration,
@@ -38,6 +39,30 @@ function extractLogDataFromMarkup(selector) {
     })
     .toArray();
 }
+
+function extractLogDataPage({from, to, page = 1}) {
+  const q = qs.stringify({ from,to, page });
+
+  axios.get(`/daily_tasks?${q}`)
+    .then(res => $(res.data))
+    .then(pageData => {
+      const results = [extractLogDataFromMarkup(pageData)]
+      if (page > 1) return results
+      if (page === 1) {
+        const pages = pageData
+          .find('div.pagination a:not(.next_page, .previous_page)')
+          .map((i, paginationEl) => {
+            const p = paginationEl.getAttribute(href);
+            return extractLogDataPage(from, to, p)
+          })
+
+        return [results, ...pages]
+      }
+
+      return
+    })
+}
+
 function extractLogData() {
   const selector = "table.table-striped tbody tr";
   const result = extractLogDataFromMarkup($(selector));

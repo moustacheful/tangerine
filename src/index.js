@@ -25,7 +25,10 @@ if (q.to.diff(q.from, "days") < 14) {
 	root.id = "root";
 	document.body.append(root);
 
-	extractState().then(state => {
+	extractState({
+		to: moment(),
+		from: moment().subtract(14, "days")
+	}).then(state => {
 		ReactDOM.render(<App {...state} />, document.getElementById("root"));
 	});
 }
