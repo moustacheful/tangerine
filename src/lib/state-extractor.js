@@ -18,9 +18,10 @@ function extractLogDataFromMarkup(selector) {
 
       const id = $(el.children[8]).find("a").first().attr("href").split("=")[1];
       const start = moment(`${date} ${startTime}`, "DD/MM/YYYY H:mm");
-      const project = $("#project_id option")
+      const projectEl = $("#project_id option")
         .toArray()
         .find(el => el.textContent === projectString);
+      const projectId = projectEl ? projectEl.value : undefined;
 
       return {
         id,
@@ -30,7 +31,7 @@ function extractLogDataFromMarkup(selector) {
         activityType,
         editable: false,
         project: {
-          id: project.value,
+          id: projectId,
           label: projectString
         }
       };
