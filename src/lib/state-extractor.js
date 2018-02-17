@@ -1,7 +1,8 @@
 import $ from "jquery";
-import axios from "./axios";
+import http from "./http";
 import moment from "moment";
 import qs from "qs";
+import Pomelo from "./pomelo";
 
 function extractLogDataFromMarkup(doc) {
   return doc
@@ -19,10 +20,15 @@ function extractLogDataFromMarkup(doc) {
       ] = Array.from(el.children).map(c => c.textContent);
 
       const id = $(el.children[8]).find("a").first().attr("href").split("=")[1];
-      const start = moment(`${date} ${startTime}`, "DD/MM/YYYY H:mm");
+      const start = moment(
+        `${date} ${startTime}`,
+        `${Pomelo.dateFormat} ${Pomelo.timeFormat}`
+      );
+
       const projectEl = $("#project_id option")
         .toArray()
         .find(el => el.textContent === projectString);
+
       const projectId = projectEl ? projectEl.value : undefined;
 
       return {
@@ -44,7 +50,7 @@ function extractLogDataFromMarkup(doc) {
 function extractLogData(from, to, page = 1) {
   const q = qs.stringify({ from, to, page });
 
-  return axios
+  return http
     .get(`/daily_tasks?${q}`)
     .then(res => $(res.data))
     .then(pageData => {
@@ -64,28 +70,6 @@ function extractLogData(from, to, page = 1) {
         return pagesResults.reduce((acc, items) => [...acc, ...items], results);
       });
     });
-}
-
-function extractLogDataOld() {
-  const selector = "table.table-striped tbody tr";
-  const result = extractLogDataFromMarkup($(selector));
-
-  const otherPages = $("div.pagination a:not(.next_page, .previous_page)")
-    .map((i, page) => {
-      const url = page.getAttribute("href");
-      console.log(url);
-      return axios
-        .get(url)
-        .then(({ data }) => $(data).find(selector))
-        .then(items => extractLogDataFromMarkup(items));
-    })
-    .toArray();
-
-  return Promise.all(otherPages).then(pageData => {
-    return pageData.reduce((acc, results) => {
-      return [...acc, ...results];
-    }, result);
-  });
 }
 
 function extractProjects() {

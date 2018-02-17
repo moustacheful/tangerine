@@ -1,7 +1,7 @@
 import React from "react";
 import $ from "jquery";
 import autobind from "autobind-decorator";
-import axios from "../lib/axios";
+import http from "../lib/http";
 
 class Form extends React.Component {
 	state = { tasks: [], timeMap: {}, formData: {} };
@@ -14,7 +14,7 @@ class Form extends React.Component {
 		this.getTasksForProject(302);
 
 		const url = $("#btn-create-daily-task").attr("href");
-		axios.get(url + `?_=${Date.now()}`).then(({ data }) => {
+		http.get(url + `?_=${Date.now()}`).then(({ data }) => {
 			const [match] = data.match(/\s"(.*)"\s/);
 			const htmlString = JSON.parse(match.trim());
 			const html = $(htmlString);
@@ -43,7 +43,7 @@ class Form extends React.Component {
 	}
 
 	getTasksForProject(projectId) {
-		axios
+		http
 			.get(`/daily_tasks/activities?project_id=${projectId}&_=${Date.now()}`)
 			.then(({ data }) => {
 				this.setState({ tasks: data });
@@ -51,7 +51,7 @@ class Form extends React.Component {
 	}
 
 	submit(evt) {
-		axios({
+		http({
 			method: evt.target.getAttribute("method"),
 			url: evt.target.getAttribute("action"),
 			data: new FormData(evt.target),
