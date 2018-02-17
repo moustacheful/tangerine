@@ -1,6 +1,7 @@
 import $ from "jquery";
 import axios from "./axios";
 import moment from "moment";
+import qs from "qs";
 
 function extractLogDataFromMarkup(doc) {
   return doc
@@ -40,30 +41,32 @@ function extractLogDataFromMarkup(doc) {
     .toArray();
 }
 
-function extractLogDataPage({from, to, page = 1}) {
-  const q = qs.stringify({ from,to, page });
+function extractLogData(from, to, page = 1) {
+  const q = qs.stringify({ from, to, page });
 
-  axios.get(`/daily_tasks?${q}`)
+  return axios
+    .get(`/daily_tasks?${q}`)
     .then(res => $(res.data))
     .then(pageData => {
-      const results = [extractLogDataFromMarkup(pageData)]
-      if (page > 1) return results
-      if (page === 1) {
-        const pages = pageData
-          .find('div.pagination a:not(.next_page, .previous_page)')
-          .map((i, paginationEl) => {
-            const p = paginationEl.getAttribute(href);
-            return extractLogDataPage(from, to, p)
-          })
+      const results = extractLogDataFromMarkup(pageData);
+      if (page > 1) return results;
 
-        return [results, ...pages]
-      }
+      const pages = pageData
+        .find("div.pagination a:not(.next_page, .previous_page)")
+        .map((i, paginationEl) => {
+          const nextQuery = qs.parse(
+            paginationEl.getAttribute("href").split("?")[1]
+          );
+          return extractLogData(from, to, nextQuery.page);
+        });
 
-      return
-    })
+      return Promise.all(pages).then(pagesResults => {
+        return pagesResults.reduce((acc, items) => [...acc, ...items], results);
+      });
+    });
 }
 
-function extractLogData() {
+function extractLogDataOld() {
   const selector = "table.table-striped tbody tr";
   const result = extractLogDataFromMarkup($(selector));
 
@@ -94,9 +97,9 @@ function extractProjects() {
   return Promise.resolve(result);
 }
 
-export default function extractState() {
+export default function extractState({ from, to }) {
   return Promise.all([
-    extractLogData(),
+    extractLogData(from, to),
     extractProjects()
   ]).then(([log, projects]) => {
     console.log(log);
