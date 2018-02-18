@@ -50,7 +50,7 @@ body {
 	z-index: 100;
 }
 
-.fc-event.event-editable {
+.event-editable {
 	border: 1px dashed grey;
 	color: #666;
 	background: #fafafa;
@@ -70,6 +70,7 @@ body {
 	display: flex;
 	max-width: 1200px;
 	margin: 0 auto;
+	height: 800px;
 }
 
 @keyframes slide-down {
@@ -77,4 +78,19 @@ body {
 		opacity: 0;
 		transform: translateY(-100px);
 	}
+}
+
+
+.rbc-row:nth-child(2) {
+	display: none;
+}
+.rbc-time-slot { min-height: 32px; }
+.rbc-day-slot .rbc-time-slot {
+	border-color: #dadada;
+}
+.rbc-event-content {
+	font-size: 12px;
+}
+.rbc-event-label {
+	font-size: 10px;
 }

@@ -5,16 +5,23 @@
   "dependencies": {
     "autobind-decorator": "^2.1.0",
     "axios": "^0.17.1",
-    "fullcalendar": "^3.8.2",
     "jquery": "^3.3.1",
     "lodash": "^4.17.5",
     "moment": "^2.20.1",
     "react": "^16.2.0",
+    "react-big-calendar": "^0.18.0",
+    "react-dnd": "^2.5.4",
+    "react-dnd-html5-backend": "^2.5.4",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.1"
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.1",
+    "react-select": "^1.2.1",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1"
   },
   "scripts": {
-    "dev": "env HTTPS=true react-scripts start",
+    "dev": "env HTTPS=true DEV=true react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build && mv build/static/js/*.js build/static/js/main.js && mv build/static/css/*.css build/static/css/main.css",
     "test": "react-scripts test --env=jsdom",

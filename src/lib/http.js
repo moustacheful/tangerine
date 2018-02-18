@@ -1,10 +1,12 @@
-const axios = require('axios');
+const axios = require("axios");
 
-axios.defaults.headers.common = {
-	'X-Requested-With': 'XMLHttpRequest',
-	'X-CSRF-TOKEN': document
-		.querySelector('meta[name="csrf-token"]')
-		.getAttribute('content'),
-};
+if (process.env.NODE_ENV !== "development") {
+	axios.defaults.headers.common = {
+		"X-Requested-With": "XMLHttpRequest",
+		"X-CSRF-TOKEN": document
+			.querySelector('meta[name="csrf-token"]')
+			.getAttribute("content")
+	};
+}
 
 export default axios;

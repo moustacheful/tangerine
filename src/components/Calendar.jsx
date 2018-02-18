@@ -1,85 +1,66 @@
 import React from "react";
 import autobind from "autobind-decorator";
-import FullCalendar from "./FullCalendar";
+import moment from "moment";
+import BigCalendar from "react-big-calendar";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import HTML5Backend from "react-dnd-html5-backend";
+import { DragDropContext } from "react-dnd";
+
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+
+// Add localizer
+BigCalendar.momentLocalizer(moment);
+// Drag-and-drop-ize
+const DndBigCalendar = withDragAndDrop(BigCalendar);
 
 class Calendar extends React.Component {
-	state = {
-		events: [],
-		range: undefined
-	};
-
-	componentDidMount() {
-		this.setState({
-			events: this.props.calendarData
-		});
-	}
-
-	componentWillReceiveProps(newProps) {
-		if (this.props.calendarData !== newProps.calendarData) {
-			this.setState({
-				events: newProps.calendarData
-			});
-		}
-	}
-
-	onEditEvent(event, delta) {
-		console.log(event);
-		this.setState({
-			editableEvent: event
-		});
-	}
-
-	onCreate(start, end, evt, view) {
-		const event = {
-			id: "new",
-			start,
-			end,
-			title: "Nueva tarea",
-			editable: true
+	eventPropGetter(event) {
+		return {
+			className: event.editable ? "event-editable" : ""
 		};
-
-		this.props.setEditableEvent(event);
 	}
 
-	renderEvent(event, el) {
-		if (event.editable) {
-			el.addClass("event-editable");
-		}
+	onEventDrop({ start, end, event }) {
+		this.props.updateEvent(event.id, { start, end });
+	}
+
+	onEventResize(_, { start, end, event }) {
+		this.props.updateEvent(event.id, { start, end });
+	}
+
+	onSelectEvent(event) {
+		this.props.setSelectedEventId(event.id);
 	}
 
 	render() {
-		const events = [...this.state.events];
-
-		if (this.props.editableEvent) {
-			events.push(this.props.editableEvent);
-		}
-
 		return (
-			<FullCalendar
-				allDaySlot={false}
-				visibleRange={undefined}
-				viewRender={view => {
-					// should probably check here and keep state of the range being seen
-				}}
-				id="fullcalendar"
-				defaultView="agendaWeek"
-				header={{
-					left: "prev,next today",
-					center: "title",
-					right: ""
-				}}
-				navLinks={true}
-				events={events}
+			<DndBigCalendar
+				defaultView="week"
+				views={["week"]}
+				events={this.props.events}
 				selectable={true}
-				select={this.onCreate}
-				editable={true}
-				eventResize={this.props.setEditableEvent}
-				eventDrop={this.props.setEditableEvent}
-				eventRender={this.renderEvent}
-				height="500"
+				resizable={true}
+				onEventDrop={this.onEventDrop}
+				onEventResize={this.onEventResize}
+				onSelectEvent={this.onSelectEvent}
+				onSelectSlot={this.props.createNewEvent}
+				scrollToTime={new Date(2018, 2, 17, 8, 0)}
+				drilldownView={null}
+				eventPropGetter={this.eventPropGetter}
+				formats={{
+					eventTimeRangeFormat({ start, end }, culture, localizer) {
+						const optionalMinutes = t => {
+							const f = t.getMinutes() ? "H:mm" : "H";
+							return localizer.format(t, f);
+						};
+
+						const res = [optionalMinutes(start), optionalMinutes(end)];
+						return res.join(" - ");
+					}
+				}}
 			/>
 		);
 	}
 }
 
-export default autobind(Calendar);
+export default DragDropContext(HTML5Backend)(autobind(Calendar));

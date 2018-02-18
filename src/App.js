@@ -1,7 +1,11 @@
-import React, { Component } from "react";
 import autobind from "autobind-decorator";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
 import Calendar from "./components/Calendar";
 import Form from "./components/Form";
+import { Actions as LogActions } from "./reducer/log";
+import { selectedEventSelector } from "./reducer/selectors";
 
 class App extends Component {
 	state = {
@@ -11,10 +15,6 @@ class App extends Component {
 
 	toggle() {
 		this.setState({ collapsed: !this.state.collapsed });
-	}
-
-	setEditableEvent(editableEvent) {
-		this.setState({ editableEvent });
 	}
 
 	render() {
@@ -31,17 +31,22 @@ class App extends Component {
 				{!this.state.collapsed &&
 					<div className="pane">
 						<div className="flex-container">
-							<Calendar
-								calendarData={this.props.log}
-								editableEvent={this.state.editableEvent}
-								setEditableEvent={this.setEditableEvent}
-							/>
+							<div id="fullcalendar">
+								<Calendar
+									events={this.props.log.events}
+									updateEvent={this.props.updateEvent}
+									createNewEvent={this.props.createNewEvent}
+									setSelectedEventId={this.props.setSelectedEventId}
+								/>
+							</div>
 
-							{this.state.editableEvent
+							{this.props.log.selectedEvent
 								? <aside>
 										<Form
-											eventData={this.state.editableEvent}
-											setEditableEvent={this.setEditableEvent}
+											projects={this.props.projects}
+											event={this.props.log.selectedEvent}
+											updateEvent={this.props.updateEvent}
+											setEditableEvent={this.props.updateEvent}
 										/>
 									</aside>
 								: <aside>
@@ -56,4 +61,15 @@ class App extends Component {
 	}
 }
 
-export default autobind(App);
+export default connect(
+	state => {
+		return {
+			...state,
+			log: {
+				...state.log,
+				selectedEvent: selectedEventSelector(state)
+			}
+		};
+	},
+	{ ...LogActions }
+)(autobind(App));

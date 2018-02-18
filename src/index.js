@@ -1,22 +1,46 @@
-import React from "react";
+import { createStore, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
 import ReactDOM from "react-dom";
-import qs from "qs";
+import React from "react";
 import moment from "moment";
-
-import "./index.css";
 import Pomelo from "./lib/pomelo";
-import "fullcalendar/dist/fullcalendar.css";
+import qs from "qs";
+
 import App from "./App";
 import extractState from "./lib/state-extractor";
+import reducer from "./reducer";
+
+import "react-select/dist/react-select.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./index.css";
+
+const getStore = state => {
+	return createStore(reducer, state, applyMiddleware(thunk));
+};
+
+const mountApplication = initialState => {
+	const store = getStore(initialState);
+	ReactDOM.render(
+		<Provider store={store}>
+			<App />
+		</Provider>,
+		document.getElementById("root")
+	);
+};
 
 const root = document.createElement("div");
 root.id = "root";
 document.body.append(root);
 
-extractState({
-	to: moment().format(Pomelo.dateFormat),
-	from: moment().subtract(14, "days").format(Pomelo.dateFormat)
-}).then(state => {
-	ReactDOM.render(<App {...state} />, document.getElementById("root"));
-});
+if (process.env.NODE_ENV === "developmentx") {
+	console.log("Running in dev mode, using mock data");
+	const mockState = require("./mock-state").default;
 
+	mountApplication(mockState);
+} else {
+	extractState({
+		to: moment().format(Pomelo.dateFormat),
+		from: moment().subtract(14, "days").format(Pomelo.dateFormat)
+	}).then(state => mountApplication(state));
+}
