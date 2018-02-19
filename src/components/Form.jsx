@@ -28,6 +28,7 @@ class EnhancedSelect extends React.Component {
 class Form extends React.Component {
 	state = {
 		tasks: [],
+		loadingTasks: false,
 		timeMap: {},
 		formData: {},
 		event: {},
@@ -123,25 +124,37 @@ class Form extends React.Component {
 		});
 	}
 
+	updateActivity(state) {
+		const found = _.find(state.tasks, { label: state.event.activity });
+
+		this.setState({
+			activityId: found ? found.value : undefined
+		});
+	}
+
 	componentDidUpdate(prevProps, prevState) {
 		if (
 			this.state.event.project &&
 			this.state.event.project !== prevState.event.project
 		) {
-			console.log("GETTING PROJECT", this.state.event.project);
+			this.getTasksForProject(this.state.event.project);
+		}
 
-			this.getTasksForProject(this.state.event.project).then(tasks => {
-				const found = _.find(tasks, { label: this.state.event.activity });
-				this.setState({
-					activityId: found.value
-				});
-			});
+		if (
+			this.state.event.activity !== prevState.event.activity ||
+			this.state.tasks !== prevState.tasks
+		) {
+			this.updateActivity(this.state);
 		}
 	}
 
 	getTasksForProject(projectId) {
+		if (!projectId) return Promise.resolve([]);
+		this.setState({
+			loadingTasks: true
+		});
 		return Pomelo.getTasksForProject(projectId).then(tasks => {
-			this.setState({ tasks });
+			this.setState({ tasks, loadingTasks: false });
 			return tasks;
 		});
 	}
@@ -175,6 +188,7 @@ class Form extends React.Component {
 	render() {
 		return (
 			<form action="/daily_tasks" method="post" onSubmit={this.submit}>
+				<pre>{JSON.stringify(this.state.event, null, "  ")}</pre>
 				<div className="form-group">
 					<label htmlFor="t_event-title">Nombre tarea</label>
 					<input
@@ -245,6 +259,7 @@ class Form extends React.Component {
 									}
 								});
 							}}
+							isLoading={this.state.loadingTasks}
 							options={this.state.tasks}
 						/>
 					</div>}
