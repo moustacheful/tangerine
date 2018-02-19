@@ -188,7 +188,6 @@ class Form extends React.Component {
 	render() {
 		return (
 			<form action="/daily_tasks" method="post" onSubmit={this.submit}>
-				<pre>{JSON.stringify(this.state.event, null, "  ")}</pre>
 				<div className="form-group">
 					<label htmlFor="t_event-title">Nombre tarea</label>
 					<input
