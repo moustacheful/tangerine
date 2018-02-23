@@ -72,9 +72,6 @@ const Pomelo = {
 					startTime,
 					date,
 					title,
-					,
-					projectString,
-					activity
 					// url,
 				] = Array.from(el.children).map(c => c.textContent);
 
@@ -83,22 +80,14 @@ const Pomelo = {
 					description.data("original-title") || description.attr("title");
 				description = description === "Sin Comentario" ? "" : description;
 
-				console.log(description);
-				const id = $(el.children[8])
-					.find("a")
-					.first()
-					.attr("href")
-					.split("=")[1];
+				const id = el.getAttribute('data-daily-task-id');
+				const activity = $(el.children[6]).data('activity-id')
+				const project = $(el.children[5]).data('project-id')
+
 				const start = moment(
 					`${date} ${startTime}`,
 					`${Pomelo.dateFormat} ${Pomelo.timeFormat}`
 				);
-
-				const projectEl = $("#project_id option")
-					.toArray()
-					.find(el => el.textContent === projectString);
-
-				const projectId = projectEl ? projectEl.value : undefined;
 
 				return {
 					id,
@@ -108,7 +97,7 @@ const Pomelo = {
 					activity,
 					description,
 					editable: false,
-					project: projectId
+					project
 				};
 			})
 			.toArray();

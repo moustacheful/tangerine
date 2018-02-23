@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Tangerine
+// @name         Tangerine (LOCAL)
 // @namespace    http://acidlabs.io/
 // @version      0.1
 // @description  Hijacks our beloved tracking platform to make it useable-ish.
@@ -10,14 +10,8 @@
 
 (function() {
     "use strict";
-    var script, link;
+    var script;
     script = document.createElement("script");
-    script.src = "https://moustacheful.github.io/tangerine/build/static/js/main.js";
-
-    link = document.createElement("link");
-    link.href = "https://moustacheful.github.io/tangerine/build/static/css/main.css";
-    link.rel = "stylesheet";
-
-    document.body.append(link);
+    script.src = "https://localhost:5000/static/js/bundle.js";
     document.body.append(script);
 })();

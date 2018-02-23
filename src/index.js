@@ -33,14 +33,21 @@ const root = document.createElement("div");
 root.id = "root";
 document.body.append(root);
 
-if (process.env.NODE_ENV === "developmentx") {
-	console.log("Running in dev mode, using mock data");
-	const mockState = require("./mock-state").default;
 
-	mountApplication(mockState);
-} else {
-	extractState({
-		to: moment().format(Pomelo.dateFormat),
-		from: moment().subtract(14, "days").format(Pomelo.dateFormat)
-	}).then(state => mountApplication(state));
-}
+Pomelo.getProjects().then((projects) => {
+	let initialState = {projects}
+	if (process.env.NODE_ENV === "developmentx") {
+		console.log("Running in dev mode, using mock data");
+		initialState = { 
+			...initialState, 
+			...require("./mock-state").default
+		};
+	}
+		/*
+		extractState({
+			to: moment().format(Pomelo.dateFormat),
+			from: moment().subtract(14, "days").format(Pomelo.dateFormat)
+		}).
+		*/
+	mountApplication(initialState);
+})

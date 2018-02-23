@@ -35,6 +35,8 @@ class Calendar extends React.Component {
 	render() {
 		return (
 			<DndBigCalendar
+				date={this.props.date}
+				onNavigate={this.props.setDate}
 				defaultView="week"
 				views={["week"]}
 				events={this.props.events}

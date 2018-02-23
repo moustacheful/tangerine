@@ -1,17 +1,47 @@
 import _ from "lodash";
+import Pomelo from '../lib/pomelo'
+import moment from 'moment'
 
 const namespace = "LOG";
+export const IS_LOADING = `${namespace}:IS_LOADING`;
+export const SET_DATE = `${namespace}:SET_DATE`;
+export const SET_EVENTS = `${namespace}:SET_EVENTS`;
 export const CREATE_NEW_EVENT = `${namespace}:CREATE_NEW_EVENT`;
 export const UPDATE_EVENT = `${namespace}:UPDATE_EVENT`;
 export const SET_SELECTED_EVENT_ID = `${namespace}:SET_SELECTED_EVENT_ID`;
 
 const defaultState = {
+	loading: false,
+	date: new Date(),
 	selectedEventId: false,
 	events: []
 };
 
 export default function(state = defaultState, action) {
 	switch (action.type) {
+		case IS_LOADING: {
+			return {
+				...state,
+				loading: action.value
+			}
+			break;
+		}
+		case SET_DATE: {
+			return {
+				...state,
+				date: action.value
+			}
+			break;
+		}
+
+		case SET_EVENTS: {
+			return {
+				...state,
+				events: action.value
+			}
+			break;
+		}
+
 		case CREATE_NEW_EVENT: {
 			const existingEvent = _.findIndex(state.events, { id: "new" });
 			const events = [...state.events];
@@ -43,7 +73,10 @@ export default function(state = defaultState, action) {
 		case UPDATE_EVENT: {
 			const eventIndex = _.findIndex(state.events, { id: action.eventId });
 
-			if (eventIndex === -1) return;
+			if (eventIndex === -1) {
+				console.log(action.eventId, 'not found')
+				return;
+			}
 
 			const events = [...state.events];
 
@@ -72,10 +105,35 @@ export default function(state = defaultState, action) {
 }
 
 export const Actions = {
+	setDate(date) {
+		return dispatch => {
+			dispatch({ type: SET_DATE, value: date})
+			dispatch(Actions.fetchEvents(
+				moment(date).startOf('week'),
+				moment(date).endOf('week'),
+			))
+			
+		}
+	},
 	updateEvent(eventId, data) {
 		return dispatch => {
 			dispatch({ type: UPDATE_EVENT, eventId, data });
 		};
+	},
+	fetchEvents(from, to) {
+		return dispatch => {
+			dispatch({ type: IS_LOADING, value: true })
+
+			Pomelo.extractLogData(
+				from.format(Pomelo.dateFormat),
+				to.format(Pomelo.dateFormat)
+			).then(log => {
+				dispatch({ type: IS_LOADING, value: false })
+				dispatch({ type: SET_EVENTS, value: log })
+			}).catch(err => {
+				dispatch({ type: IS_LOADING, value: false })
+			})
+		}
 	},
 	createNewEvent(options) {
 		return dispatch => {

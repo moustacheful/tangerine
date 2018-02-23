@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-if (process.env.NODE_ENV !== "development") {
+if (process.env.NODE_ENV !== "develxopment") {
 	axios.defaults.headers.common = {
 		"X-Requested-With": "XMLHttpRequest",
 		"X-CSRF-TOKEN": document
