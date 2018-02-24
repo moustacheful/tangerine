@@ -5,6 +5,7 @@ import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
+import classify from "../lib/classify";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
@@ -15,8 +16,13 @@ const DndBigCalendar = withDragAndDrop(BigCalendar);
 
 class Calendar extends React.Component {
 	eventPropGetter(event) {
+		const isNew = event.id === "new";
+
 		return {
-			className: event.editable ? "event-editable" : ""
+			className: classify({
+				"event-is-new": isNew,
+				"event-modified": !isNew && event._hasChanged
+			})
 		};
 	}
 

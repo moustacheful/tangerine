@@ -1,12 +1,12 @@
-import React from 'react';
-import $ from 'jquery';
-import autobind from 'autobind-decorator';
-import http from '../lib/http';
-import moment from 'moment';
-import Pomelo from '../lib/pomelo';
-import _ from 'lodash';
-import Select from 'react-select';
-import qs from 'qs';
+import _ from "lodash";
+import Select from "react-select";
+import React from "react";
+import $ from "jquery";
+import autobind from "autobind-decorator";
+import moment from "moment";
+
+import http from "../lib/http";
+import Pomelo from "../lib/pomelo";
 
 class EnhancedSelect extends React.Component {
   render() {
@@ -18,7 +18,7 @@ class EnhancedSelect extends React.Component {
         name={name}
         onChange={option => {
           onChange({
-            target: { name, value: option.value },
+            target: { name, value: option.value }
           });
         }}
       />
@@ -28,12 +28,13 @@ class EnhancedSelect extends React.Component {
 
 class Form extends React.Component {
   state = {
+    showDebug: false,
     tasks: [],
     loadingTasks: false,
     timeMap: {},
     formData: {},
     event: {},
-    activityId: undefined,
+    activityId: undefined
   };
 
   componentWillMount() {
@@ -43,7 +44,7 @@ class Form extends React.Component {
   componentDidMount() {
     if (this.props.event) {
       this.setState({
-        event: this.props.event,
+        event: this.props.event
       });
     }
 
@@ -57,21 +58,15 @@ class Form extends React.Component {
       const html = $(htmlString);
 
       this.setState({
-        authenticityToken: html
-          .find('[name=authenticity_token]')
-          .first()
-          .val(),
-        userId: html
-          .find('#daily_task_user_id')
-          .first()
-          .val(),
+        authenticityToken: html.find("[name=authenticity_token]").first().val(),
+        userId: html.find("#daily_task_user_id").first().val(),
         timeMap: html
-          .find('#daily_task_start_time option')
+          .find("#daily_task_start_time option")
           .toArray()
           .reduce((acc, item) => {
             acc[item.textContent] = item.value;
             return acc;
-          }, {}),
+          }, {})
       });
     });
   }
@@ -79,23 +74,27 @@ class Form extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.event && nextProps.event.id !== this.props.event.id) {
       this.setState({
-        event: nextProps.event,
+        event: nextProps.event
       });
     } else {
       const updated = {
         start: this.props.event.start,
-        end: this.props.event.end,
+        end: this.props.event.end
       };
 
       this.setState({
         event: {
           ...this.state.event,
-          ...updated,
-        },
+          ...updated
+        }
       });
     }
   }
-
+  toggleDebug() {
+    this.setState({
+      showDebug: !this.state.showDebug
+    });
+  }
   mapEventToForm() {
     const { event } = this.state;
 
@@ -104,27 +103,26 @@ class Form extends React.Component {
 
     const taskDate = start.format(Pomelo.dateFormat);
     const taskStart = start.format(Pomelo.timeFormat);
-    const taskEnd = end.format(Pomelo.timeFormat);
-    const taskHours = end.diff(start, 'hours', true);
+    const taskHours = end.diff(start, "hours", true);
 
     return {
       authenticity_token: this.state.authenticityToken,
-      utf8: '&#x2713;',
-      'daily_task[user_id]': this.state.userId,
-      'daily_task[name]': event.title,
-      'daily_task[description]': event.description,
-      'daily_task[project_id]': event.project,
-      'daily_task[ticket_url]': event.relatedURL,
-      'daily_task[activity_id]': event.activity,
-      'daily_task[date]': taskDate,
-      'daily_task[start_time]': this.state.timeMap[taskStart],
-      'daily_task[hours_amount]': taskHours,
-      'daily_task[is_not_billable]': 0,
+      utf8: "&#x2713;",
+      "daily_task[user_id]": this.state.userId,
+      "daily_task[name]": event.title,
+      "daily_task[description]": event.description,
+      "daily_task[project_id]": event.project,
+      "daily_task[ticket_url]": event.relatedURL,
+      "daily_task[activity_id]": event.activity,
+      "daily_task[date]": taskDate,
+      "daily_task[start_time]": this.state.timeMap[taskStart],
+      "daily_task[hours_amount]": taskHours,
+      "daily_task[is_not_billable]": 0
     };
   }
 
   getHTMLForm() {
-    const url = $('#btn-create-daily-task').attr('href');
+    const url = $("#btn-create-daily-task").attr("href");
     return http.get(url + `?_=${Date.now()}`);
   }
 
@@ -133,11 +131,10 @@ class Form extends React.Component {
       {
         event: {
           ...this.state.event,
-          [evt.target.name]:
-            evt.target.type === 'checkbox'
-              ? evt.target.checked
-              : evt.target.value,
-        },
+          [evt.target.name]: evt.target.type === "checkbox"
+            ? evt.target.checked
+            : evt.target.value
+        }
       },
       state => {
         this.updateEvent(this.state.event.id, this.state.event);
@@ -157,7 +154,7 @@ class Form extends React.Component {
   getTasksForProject(projectId) {
     if (!projectId) return Promise.resolve([]);
     this.setState({
-      loadingTasks: true,
+      loadingTasks: true
     });
     return Pomelo.getTasksForProject(projectId).then(tasks => {
       this.setState({ tasks, loadingTasks: false });
@@ -167,45 +164,14 @@ class Form extends React.Component {
 
   delete(evt) {
     evt.preventDefault();
-    if (this.state.event.id === 'new') return;
-
-    http({
-      url: `/daily_tasks/${this.state.event.id}`,
-      method: 'post',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded',
-      },
-      data: qs.stringify({
-      	_method: 'delete',
-        authenticity_token: this.state.authenticityToken,
-      }),
-    });
+    this.props.deleteEvent(this.state.event.id);
   }
 
   submit(evt) {
     evt.preventDefault();
 
     const data = this.mapEventToForm();
-    const formData = _.reduce(
-      data,
-      (acc, value, key) => {
-        acc.append(key, value);
-        return acc;
-      },
-      new FormData()
-    );
-
-    http({
-      method: evt.target.getAttribute('method'),
-      url: evt.target.getAttribute('action'),
-      data: formData,
-      config: { headers: { 'Content-Type': 'multipart/form-data' } },
-    })
-      .then(({ data }) => {
-        console.log('success');
-        // window.location.reload();
-      })
-      .catch(console.error);
+    this.props.saveNewEvent(data);
   }
 
   render() {
@@ -263,7 +229,7 @@ class Form extends React.Component {
             options={this.props.projects}
           />
         </div>
-        {!!this.state.tasks.length && (
+        {!!this.state.tasks.length &&
           <div className="form-group">
             <label htmlFor="t_event-activity">Tipo de tarea</label>
             <EnhancedSelect
@@ -276,21 +242,37 @@ class Form extends React.Component {
               options={this.state.tasks}
               isLoading={this.state.loadingTasks}
             />
-          </div>
-        )}
+          </div>}
 
-        <button className="btn btn-primary" type="submit">
-          Enviar
-        </button>
+        <div className="tools">
+          {this.state.event.id === "new" &&
+            <button className="btn btn-primary" type="submit">
+              Enviar
+            </button>}
+          {this.state.event.id !== "new" &&
+            <div>
+              <button
+                onClick={this.delete}
+                className="btn btn-warning"
+                disabled
+              >
+                Actualizar
+              </button>
+              <button onClick={this.delete} className="btn btn-danger">
+                Borrar
+              </button>
+            </div>}
+        </div>
+        <a href="#" onClick={this.toggleDebug}>Ver info debug</a>
+        {this.state.showDebug &&
+          <pre>
+            {JSON.stringify(
+              _.pick(this.state.event, ["start", "end"]),
+              null,
+              "  "
+            )}
+          </pre>}
 
-        <pre>{JSON.stringify(_.pick(this.state.event, ['start', 'end']))}</pre>
-        {this.state.event.id !== 'new' && (
-          <div className="tools">
-            <button onClick={this.delete} className="btn btn-danger">
-              Borrar
-            </button>
-          </div>
-        )}
       </form>
     );
   }

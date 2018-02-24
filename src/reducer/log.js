@@ -1,6 +1,8 @@
 import _ from "lodash";
-import Pomelo from '../lib/pomelo'
-import moment from 'moment'
+import moment from "moment";
+import Pomelo from "../lib/pomelo";
+import http from "../lib/http";
+import Toasts from "../components/Toasts";
 
 const namespace = "LOG";
 export const IS_LOADING = `${namespace}:IS_LOADING`;
@@ -8,6 +10,7 @@ export const SET_DATE = `${namespace}:SET_DATE`;
 export const SET_EVENTS = `${namespace}:SET_EVENTS`;
 export const CREATE_NEW_EVENT = `${namespace}:CREATE_NEW_EVENT`;
 export const UPDATE_EVENT = `${namespace}:UPDATE_EVENT`;
+export const DELETE_EVENT = `${namespace}:DELETE_EVENT`;
 export const SET_SELECTED_EVENT_ID = `${namespace}:SET_SELECTED_EVENT_ID`;
 
 const defaultState = {
@@ -23,23 +26,23 @@ export default function(state = defaultState, action) {
 			return {
 				...state,
 				loading: action.value
-			}
-			break;
+			};
 		}
+
 		case SET_DATE: {
 			return {
 				...state,
 				date: action.value
-			}
-			break;
+			};
 		}
 
 		case SET_EVENTS: {
 			return {
 				...state,
-				events: action.value
-			}
-			break;
+				events: action.value.map(event => {
+					return { ...event, _hasChanged: false };
+				})
+			};
 		}
 
 		case CREATE_NEW_EVENT: {
@@ -67,14 +70,21 @@ export default function(state = defaultState, action) {
 				...state,
 				events
 			};
-			break;
+		}
+
+		case DELETE_EVENT: {
+			const events = _.reject(state.events, { id: action.eventId });
+
+			return {
+				...state,
+				events
+			};
 		}
 
 		case UPDATE_EVENT: {
 			const eventIndex = _.findIndex(state.events, { id: action.eventId });
 
 			if (eventIndex === -1) {
-				console.log(action.eventId, 'not found')
 				return;
 			}
 
@@ -82,14 +92,14 @@ export default function(state = defaultState, action) {
 
 			events.splice(eventIndex, 1, {
 				...state.events[eventIndex],
-				...action.data
+				...action.data,
+				_hasChanged: true
 			});
 
 			return {
 				...state,
 				events
 			};
-			break;
 		}
 
 		case SET_SELECTED_EVENT_ID: {
@@ -97,44 +107,69 @@ export default function(state = defaultState, action) {
 				...state,
 				selectedEventId: action.value
 			};
-			break;
 		}
-	}
 
-	return { ...defaultState, ...state };
+		default:
+			return { ...defaultState, ...state };
+	}
 }
 
 export const Actions = {
 	setDate(date) {
 		return dispatch => {
-			dispatch({ type: SET_DATE, value: date})
-			dispatch(Actions.fetchEvents(
-				moment(date).startOf('week'),
-				moment(date).endOf('week'),
-			))
-			
-		}
+			dispatch({ type: SET_DATE, value: date });
+			dispatch(
+				Actions.fetchEvents(
+					moment(date).startOf("week"),
+					moment(date).endOf("week")
+				)
+			);
+		};
 	},
+
+	deleteEvent(eventId) {
+		return dispatch => {
+			if (eventId === "new") return;
+
+			http({
+				url: `/daily_tasks/${eventId}`,
+				method: "post",
+				data: { _method: "delete" }
+			})
+				.then(({ data }) => {
+					dispatch({ type: DELETE_EVENT, eventId });
+					Toasts.push("Eliminado de tu bitácora", "success");
+				})
+				.catch(err => {
+					Toasts.push("Ocurrió un error eliminando de tu bitácora", "danger");
+				});
+		};
+	},
+
 	updateEvent(eventId, data) {
 		return dispatch => {
 			dispatch({ type: UPDATE_EVENT, eventId, data });
 		};
 	},
+
 	fetchEvents(from, to) {
 		return dispatch => {
-			dispatch({ type: IS_LOADING, value: true })
+			dispatch({ type: IS_LOADING, value: true });
 
 			Pomelo.extractLogData(
 				from.format(Pomelo.dateFormat),
 				to.format(Pomelo.dateFormat)
-			).then(log => {
-				dispatch({ type: IS_LOADING, value: false })
-				dispatch({ type: SET_EVENTS, value: log })
-			}).catch(err => {
-				dispatch({ type: IS_LOADING, value: false })
-			})
-		}
+			)
+				.then(log => {
+					dispatch({ type: IS_LOADING, value: false });
+					dispatch({ type: SET_EVENTS, value: log });
+				})
+				.catch(err => {
+					dispatch({ type: IS_LOADING, value: false });
+				});
+		};
 	},
+
 	createNewEvent(options) {
 		return dispatch => {
 			dispatch({
@@ -147,6 +182,28 @@ export const Actions = {
 			});
 		};
 	},
+
+	saveNewEvent(data) {
+		return (dispatch, getState) => {
+			dispatch({ type: IS_LOADING, value: true });
+			http({
+				method: "post",
+				url: "/daily_tasks",
+				data
+			})
+				.then(({ data }) => {
+					dispatch({ type: IS_LOADING, value: false });
+					dispatch({ type: DELETE_EVENT, value: "new" });
+					dispatch(Actions.setDate(getState().log.date));
+					Toasts.push("Agregado a tu bitácora con éxito", "success");
+				})
+				.catch(() => {
+					dispatch({ type: IS_LOADING, value: false });
+					Toasts.push("Ocurrió un error guardando en tu bitácora", "danger");
+				});
+		};
+	},
+
 	setSelectedEventId(id) {
 		return dispatch => {
 			dispatch({
