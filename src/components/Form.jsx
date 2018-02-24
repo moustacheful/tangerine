@@ -1,187 +1,281 @@
+import _ from "lodash";
+import Select from "react-select";
 import React from "react";
 import $ from "jquery";
 import autobind from "autobind-decorator";
+import moment from "moment";
+
 import http from "../lib/http";
+import Pomelo from "../lib/pomelo";
+
+class EnhancedSelect extends React.Component {
+  render() {
+    const { name, onChange, ...props } = this.props;
+
+    return (
+      <Select
+        {...props}
+        name={name}
+        onChange={option => {
+          onChange({
+            target: { name, value: option.value }
+          });
+        }}
+      />
+    );
+  }
+}
 
 class Form extends React.Component {
-	state = { tasks: [], timeMap: {}, formData: {} };
+  state = {
+    showDebug: false,
+    tasks: [],
+    loadingTasks: false,
+    timeMap: {},
+    formData: {},
+    event: {},
+    activityId: undefined
+  };
 
-	componentDidMount() {
-		if (this.firstInput) {
-			requestAnimationFrame(() => this.firstInput.focus());
-		}
+  componentWillMount() {
+    this.updateEvent = _.debounce(this.props.updateEvent, 300);
+  }
 
-		this.getTasksForProject(302);
+  componentDidMount() {
+    if (this.props.event) {
+      this.setState({
+        event: this.props.event
+      });
+    }
 
-		const url = $("#btn-create-daily-task").attr("href");
-		http.get(url + `?_=${Date.now()}`).then(({ data }) => {
-			const [match] = data.match(/\s"(.*)"\s/);
-			const htmlString = JSON.parse(match.trim());
-			const html = $(htmlString);
+    if (this.firstInput) {
+      requestAnimationFrame(() => this.firstInput.focus());
+    }
 
-			this.setState({
-				authenticityToken: html.find("[name=authenticity_token]").first().val(),
-				userId: html.find("#daily_task_user_id").first().val(),
-				timeMap: html
-					.find("#daily_task_start_time option")
-					.toArray()
-					.reduce((acc, item) => {
-						acc[item.textContent] = item.value;
-						return acc;
-					}, {})
-			});
-		});
-	}
+    this.getHTMLForm().then(({ data }) => {
+      const [match] = data.match(/\s"(.*)"\s/);
+      const htmlString = JSON.parse(match.trim());
+      const html = $(htmlString);
 
-	onInputChange(evt) {
-		this.setState({
-			formData: {
-				...this.state.formData,
-				[evt.target.name]: evt.target.value
-			}
-		});
-	}
+      this.setState({
+        authenticityToken: html.find("[name=authenticity_token]").first().val(),
+        userId: html.find("#daily_task_user_id").first().val(),
+        timeMap: html
+          .find("#daily_task_start_time option")
+          .toArray()
+          .reduce((acc, item) => {
+            acc[item.textContent] = item.value;
+            return acc;
+          }, {})
+      });
+    });
+  }
 
-	getTasksForProject(projectId) {
-		http
-			.get(`/daily_tasks/activities?project_id=${projectId}&_=${Date.now()}`)
-			.then(({ data }) => {
-				this.setState({ tasks: data });
-			});
-	}
+  componentWillReceiveProps(nextProps) {
+    if (this.props.event && nextProps.event.id !== this.props.event.id) {
+      this.setState({
+        event: nextProps.event
+      });
+    } else {
+      const updated = {
+        start: this.props.event.start,
+        end: this.props.event.end
+      };
 
-	submit(evt) {
-		http({
-			method: evt.target.getAttribute("method"),
-			url: evt.target.getAttribute("action"),
-			data: new FormData(evt.target),
-			config: { headers: { "Content-Type": "multipart/form-data" } }
-		})
-			.then(({ data }) => {
-				window.location.reload();
-			})
-			.catch(console.error);
-		evt.preventDefault();
-	}
+      this.setState({
+        event: {
+          ...this.state.event,
+          ...updated
+        }
+      });
+    }
+  }
+  toggleDebug() {
+    this.setState({
+      showDebug: !this.state.showDebug
+    });
+  }
+  mapEventToForm() {
+    const { event } = this.state;
 
-	render() {
-		const { eventData } = this.props;
-		const taskDate = eventData.start.format("DD/MM/YYYY");
-		const taskStart = eventData.start.format("H:mm");
-		const taskEnd = eventData.end.format("H:mm");
-		const taskHours = eventData.end.diff(eventData.start, "hours", true);
+    const start = moment(event.start);
+    const end = moment(event.end);
 
-		return (
-			<form action="/daily_tasks" method="post" onSubmit={this.submit}>
-				<input name="utf8" type="hidden" value="&#x2713;" />
-				<input
-					type="hidden"
-					name="authenticity_token"
-					value={this.state.authenticityToken}
-				/>
-				<input
-					type="hidden"
-					name="daily_task[user_id]"
-					value={this.state.userId}
-				/>
+    const taskDate = start.format(Pomelo.dateFormat);
+    const taskStart = start.format(Pomelo.timeFormat);
+    const taskHours = end.diff(start, "hours", true);
 
-				<div className="form-group">
-					<label htmlFor="">Nombre tarea</label>
+    return {
+      authenticity_token: this.state.authenticityToken,
+      utf8: "&#x2713;",
+      "daily_task[user_id]": this.state.userId,
+      "daily_task[name]": event.title,
+      "daily_task[description]": event.description,
+      "daily_task[project_id]": event.project,
+      "daily_task[ticket_url]": event.relatedURL,
+      "daily_task[activity_id]": event.activity,
+      "daily_task[date]": taskDate,
+      "daily_task[start_time]": this.state.timeMap[taskStart],
+      "daily_task[hours_amount]": taskHours,
+      "daily_task[is_not_billable]": 0
+    };
+  }
 
-					<input
-						ref={el => (this.firstInput = el)}
-						type="text"
-						className="form-control"
-						placeholder="Título"
-						name="daily_task[name]"
-					/>
-				</div>
+  getHTMLForm() {
+    const url = $("#btn-create-daily-task").attr("href");
+    return http.get(url + `?_=${Date.now()}`);
+  }
 
-				<div className="form-group">
-					<label htmlFor="">Comentario</label>
+  onInputChange(evt) {
+    this.setState(
+      {
+        event: {
+          ...this.state.event,
+          [evt.target.name]: evt.target.type === "checkbox"
+            ? evt.target.checked
+            : evt.target.value
+        }
+      },
+      state => {
+        this.updateEvent(this.state.event.id, this.state.event);
+      }
+    );
+  }
 
-					<textarea
-						className="form-control"
-						type="text"
-						placeholder="Comentario"
-						name="daily_task[description]"
-					/>
-				</div>
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.state.event.project &&
+      this.state.event.project !== prevState.event.project
+    ) {
+      this.getTasksForProject(this.state.event.project);
+    }
+  }
 
-				<div className="form-group">
-					<label htmlFor="">URL Ticket</label>
+  getTasksForProject(projectId) {
+    if (!projectId) return Promise.resolve([]);
+    this.setState({
+      loadingTasks: true
+    });
+    return Pomelo.getTasksForProject(projectId).then(tasks => {
+      this.setState({ tasks, loadingTasks: false });
+      return tasks;
+    });
+  }
 
-					<input
-						className="form-control"
-						type="text"
-						placeholder="URL Ticket"
-						name="daily_task[ticket_url]"
-					/>
-				</div>
+  delete(evt) {
+    evt.preventDefault();
+    this.props.deleteEvent(this.state.event.id);
+  }
 
-				<input type="hidden" name="daily_task[project_id]" value="302" />
+  submit(evt) {
+    evt.preventDefault();
 
-				<div className="form-group">
-					<label htmlFor="">Tipo de tarea</label>
-					<select
-						className="form-control"
-						name="daily_task[activity_id]"
-						value={this.state.formData["daily_task[activity_id]"]}
-						onChange={this.onInputChange}
-					>
-						{this.state.tasks.map(task => (
-							<option key={task.id} value={task.id}>{task.name}</option>
-						))}
-					</select>
-				</div>
+    const data = this.mapEventToForm();
+    this.props.saveNewEvent(data);
+  }
 
-				<div className="form-group">
-					<label htmlFor="">Fecha</label>
-					<input
-						className="form-control"
-						type="text"
-						readOnly
-						value={taskDate}
-						name="daily_task[date]"
-					/>
-				</div>
+  render() {
+    return (
+      <form action="/daily_tasks" method="post" onSubmit={this.submit}>
+        <div className="form-group">
+          <label htmlFor="t_event-title">Nombre tarea</label>
+          <input
+            id="t_event-title"
+            ref={el => (this.firstInput = el)}
+            type="text"
+            className="form-control"
+            placeholder="Título"
+            name="title"
+            onChange={this.onInputChange}
+            value={this.state.event.title}
+          />
+        </div>
 
-				<div className="form-group">
-					<label htmlFor="">Hora de comienzo</label>
-					<input
-						type="text"
-						className="form-control"
-						readOnly
-						value={taskStart}
-					/>
-					<input
-						type="hidden"
-						name="daily_task[start_time]"
-						value={this.state.timeMap[taskStart]}
-					/>
-				</div>
+        <div className="form-group">
+          <label htmlFor="t_event-description">Comentario</label>
+          <textarea
+            id="t_event-description"
+            className="form-control"
+            type="text"
+            placeholder="Comentario"
+            name="description"
+            onChange={this.onInputChange}
+            value={this.state.event.description}
+          />
+        </div>
 
-				<div className="form-group">
-					<label htmlFor="">Hora de término</label>
-					<input
-						type="hidden"
-						name="daily_task[hours_amount]"
-						readOnly
-						value={taskHours}
-					/>
-					<input
-						type="text"
-						className="form-control"
-						value={`${taskEnd} (${taskHours} horas)`}
-						readOnly
-					/>
-				</div>
+        <div className="form-group">
+          <label htmlFor="t_event-related-url">URL Ticket</label>
+          <input
+            id="t_event-related-url"
+            className="form-control"
+            type="text"
+            placeholder="URL Ticket"
+            name="relatedURL"
+            onChange={this.onInputChange}
+            value={this.state.event.relatedURL}
+          />
+        </div>
 
-				<input name="daily_task[is_not_billable]" type="hidden" value="0" />
-				<button className="btn btn-primary" type="submit">Enviar</button>
-			</form>
-		);
-	}
+        <div className="form-group">
+          <label htmlFor="t_event-project">Proyecto</label>
+          <EnhancedSelect
+            id="t_event-project"
+            className="form-control"
+            name="project"
+            value={this.state.event.project}
+            clearable={false}
+            onChange={this.onInputChange}
+            options={this.props.projects}
+          />
+        </div>
+        {!!this.state.tasks.length &&
+          <div className="form-group">
+            <label htmlFor="t_event-activity">Tipo de tarea</label>
+            <EnhancedSelect
+              id="t_event-activity"
+              className="form-control"
+              name="activity"
+              value={this.state.event.activity}
+              clearable={false}
+              onChange={this.onInputChange}
+              options={this.state.tasks}
+              isLoading={this.state.loadingTasks}
+            />
+          </div>}
+
+        <div className="tools">
+          {this.state.event.id === "new" &&
+            <button className="btn btn-primary" type="submit">
+              Enviar
+            </button>}
+          {this.state.event.id !== "new" &&
+            <div>
+              <button
+                onClick={this.delete}
+                className="btn btn-warning"
+                disabled
+              >
+                Actualizar
+              </button>
+              <button onClick={this.delete} className="btn btn-danger">
+                Borrar
+              </button>
+            </div>}
+        </div>
+        <a href="#" onClick={this.toggleDebug}>Ver info debug</a>
+        {this.state.showDebug &&
+          <pre>
+            {JSON.stringify(
+              _.pick(this.state.event, ["start", "end"]),
+              null,
+              "  "
+            )}
+          </pre>}
+
+      </form>
+    );
+  }
 }
 
 export default autobind(Form);
