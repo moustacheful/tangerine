@@ -131,6 +131,7 @@ export const Actions = {
 		return dispatch => {
 			if (eventId === "new") return;
 
+			dispatch({ type: IS_LOADING, value: true });
 			http({
 				url: `/daily_tasks/${eventId}`,
 				method: "post",
@@ -142,7 +143,8 @@ export const Actions = {
 				})
 				.catch(err => {
 					Toasts.push("Ocurrió un error eliminando de tu bitácora", "danger");
-				});
+				})
+				.finally(() => dispatch({ type: IS_LOADING, value: false }));
 		};
 	},
 
@@ -161,12 +163,10 @@ export const Actions = {
 				to.format(Pomelo.dateFormat)
 			)
 				.then(log => {
-					dispatch({ type: IS_LOADING, value: false });
 					dispatch({ type: SET_EVENTS, value: log });
 				})
-				.catch(err => {
-					dispatch({ type: IS_LOADING, value: false });
-				});
+				.catch(err => { /* NOOP */ })
+				.finally(() => dispatch({ type: IS_LOADING, value: false }));
 		};
 	},
 
@@ -192,15 +192,14 @@ export const Actions = {
 				data
 			})
 				.then(({ data }) => {
-					dispatch({ type: IS_LOADING, value: false });
 					dispatch({ type: DELETE_EVENT, value: "new" });
 					dispatch(Actions.setDate(getState().log.date));
 					Toasts.push("Agregado a tu bitácora con éxito", "success");
 				})
 				.catch(() => {
-					dispatch({ type: IS_LOADING, value: false });
 					Toasts.push("Ocurrió un error guardando en tu bitácora", "danger");
-				});
+				})
+				.finally(() => dispatch({ type: IS_LOADING, value: false }));
 		};
 	},
 

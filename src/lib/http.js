@@ -1,6 +1,8 @@
 import qs from "qs";
 import axios from "axios";
 
+require('promise.prototype.finally').shim();
+
 const instance = axios.create();
 const csrfToken = document
 	.querySelector('meta[name="csrf-token"]')

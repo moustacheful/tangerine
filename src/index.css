@@ -57,12 +57,43 @@ body {
 #tangerine .loading-screen {
   background: rgba(255, 255, 255, 0.6);
   position: absolute;
+  display: flex;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .25s ease both;
 }
+
+#tangerine .loading-screen:after {
+  font-family: 'FontAwesome';
+  content: '\f013';
+  animation: spin 2s linear infinite;
+  display: block;
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  line-height: 36px;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+}
+
 
 .rbc-event.event-is-new {
   border: 1px dashed grey;
