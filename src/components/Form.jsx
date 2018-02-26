@@ -1,12 +1,14 @@
-import _ from "lodash";
-import Select from "react-select";
-import React from "react";
-import $ from "jquery";
-import autobind from "autobind-decorator";
-import moment from "moment";
+import _ from 'lodash';
+import Select from 'react-select';
+import React from 'react';
+import $ from 'jquery';
+import autobind from 'autobind-decorator';
+import moment from 'moment';
 
-import http from "../lib/http";
-import Pomelo from "../lib/pomelo";
+import http from '../lib/http';
+import Pomelo from '../lib/pomelo';
+import Storage from '../lib/storage';
+
 
 class EnhancedSelect extends React.Component {
   render() {
@@ -18,7 +20,7 @@ class EnhancedSelect extends React.Component {
         name={name}
         onChange={option => {
           onChange({
-            target: { name, value: option.value }
+            target: { name, value: option.value },
           });
         }}
       />
@@ -34,7 +36,7 @@ class Form extends React.Component {
     timeMap: {},
     formData: {},
     event: {},
-    activityId: undefined
+    activityId: undefined,
   };
 
   componentWillMount() {
@@ -44,7 +46,7 @@ class Form extends React.Component {
   componentDidMount() {
     if (this.props.event) {
       this.setState({
-        event: this.props.event
+        event: this.props.event,
       });
     }
 
@@ -58,15 +60,21 @@ class Form extends React.Component {
       const html = $(htmlString);
 
       this.setState({
-        authenticityToken: html.find("[name=authenticity_token]").first().val(),
-        userId: html.find("#daily_task_user_id").first().val(),
+        authenticityToken: html
+          .find('[name=authenticity_token]')
+          .first()
+          .val(),
+        userId: html
+          .find('#daily_task_user_id')
+          .first()
+          .val(),
         timeMap: html
-          .find("#daily_task_start_time option")
+          .find('#daily_task_start_time option')
           .toArray()
           .reduce((acc, item) => {
             acc[item.textContent] = item.value;
             return acc;
-          }, {})
+          }, {}),
       });
     });
   }
@@ -74,25 +82,26 @@ class Form extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.event && nextProps.event.id !== this.props.event.id) {
       this.setState({
-        event: nextProps.event
+        event: nextProps.event,
       });
     } else {
       const updated = {
         start: this.props.event.start,
-        end: this.props.event.end
+        end: this.props.event.end,
       };
 
       this.setState({
         event: {
           ...this.state.event,
-          ...updated
-        }
+          ...updated,
+        },
       });
     }
   }
+
   toggleDebug() {
     this.setState({
-      showDebug: !this.state.showDebug
+      showDebug: !this.state.showDebug,
     });
   }
   mapEventToForm() {
@@ -103,26 +112,26 @@ class Form extends React.Component {
 
     const taskDate = start.format(Pomelo.dateFormat);
     const taskStart = start.format(Pomelo.timeFormat);
-    const taskHours = end.diff(start, "hours", true);
+    const taskHours = end.diff(start, 'hours', true);
 
     return {
       authenticity_token: this.state.authenticityToken,
-      utf8: "&#x2713;",
-      "daily_task[user_id]": this.state.userId,
-      "daily_task[name]": event.title,
-      "daily_task[description]": event.description,
-      "daily_task[project_id]": event.project,
-      "daily_task[ticket_url]": event.relatedURL,
-      "daily_task[activity_id]": event.activity,
-      "daily_task[date]": taskDate,
-      "daily_task[start_time]": this.state.timeMap[taskStart],
-      "daily_task[hours_amount]": taskHours,
-      "daily_task[is_not_billable]": 0
+      utf8: '&#x2713;',
+      'daily_task[user_id]': this.state.userId,
+      'daily_task[name]': event.title,
+      'daily_task[description]': event.description,
+      'daily_task[project_id]': event.project,
+      'daily_task[ticket_url]': event.relatedURL,
+      'daily_task[activity_id]': event.activity,
+      'daily_task[date]': taskDate,
+      'daily_task[start_time]': this.state.timeMap[taskStart],
+      'daily_task[hours_amount]': taskHours,
+      'daily_task[is_not_billable]': 0,
     };
   }
 
   getHTMLForm() {
-    const url = $("#btn-create-daily-task").attr("href");
+    const url = $('#btn-create-daily-task').attr('href');
     return http.get(url + `?_=${Date.now()}`);
   }
 
@@ -131,10 +140,11 @@ class Form extends React.Component {
       {
         event: {
           ...this.state.event,
-          [evt.target.name]: evt.target.type === "checkbox"
-            ? evt.target.checked
-            : evt.target.value
-        }
+          [evt.target.name]:
+            evt.target.type === 'checkbox'
+              ? evt.target.checked
+              : evt.target.value,
+        },
       },
       state => {
         this.updateEvent(this.state.event.id, this.state.event);
@@ -154,7 +164,7 @@ class Form extends React.Component {
   getTasksForProject(projectId) {
     if (!projectId) return Promise.resolve([]);
     this.setState({
-      loadingTasks: true
+      loadingTasks: true,
     });
     return Pomelo.getTasksForProject(projectId).then(tasks => {
       this.setState({ tasks, loadingTasks: false });
@@ -218,7 +228,17 @@ class Form extends React.Component {
         </div>
 
         <div className="form-group">
-          <label htmlFor="t_event-project">Proyecto</label>
+          <label htmlFor="t_event-project">
+            Proyecto{' '}
+            <a
+              onClick={() =>
+                Storage.set('defaultProject', this.state.event.project)
+              }
+              href="#"
+            >
+              Guardar como favorito
+            </a>
+          </label>
           <EnhancedSelect
             id="t_event-project"
             className="form-control"
@@ -229,9 +249,19 @@ class Form extends React.Component {
             options={this.props.projects}
           />
         </div>
-        {!!this.state.tasks.length &&
+        {!!this.state.tasks.length && (
           <div className="form-group">
-            <label htmlFor="t_event-activity">Tipo de tarea</label>
+            <label htmlFor="t_event-activity">
+              Tipo de tarea{' '}
+              <a
+                onClick={() =>
+                  Storage.set('defaultActivity', this.state.event.activity)
+                }
+                href="#"
+              >
+                Guardar como favorita
+              </a>
+            </label>
             <EnhancedSelect
               id="t_event-activity"
               className="form-control"
@@ -242,14 +272,16 @@ class Form extends React.Component {
               options={this.state.tasks}
               isLoading={this.state.loadingTasks}
             />
-          </div>}
+          </div>
+        )}
 
         <div className="tools">
-          {this.state.event.id === "new" &&
+          {this.state.event.id === 'new' && (
             <button className="btn btn-primary" type="submit">
               Enviar
-            </button>}
-          {this.state.event.id !== "new" &&
+            </button>
+          )}
+          {this.state.event.id !== 'new' && (
             <div>
               <button
                 onClick={this.delete}
@@ -261,18 +293,21 @@ class Form extends React.Component {
               <button onClick={this.delete} className="btn btn-danger">
                 Borrar
               </button>
-            </div>}
+            </div>
+          )}
         </div>
-        <a href="#" onClick={this.toggleDebug}>Ver info debug</a>
-        {this.state.showDebug &&
+        <a href="#" onClick={this.toggleDebug}>
+          Ver info debug
+        </a>
+        {this.state.showDebug && (
           <pre>
             {JSON.stringify(
-              _.pick(this.state.event, ["start", "end"]),
+              _.pick(this.state.event, ['start', 'end']),
               null,
-              "  "
+              '  '
             )}
-          </pre>}
-
+          </pre>
+        )}
       </form>
     );
   }

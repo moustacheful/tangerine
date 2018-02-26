@@ -25,6 +25,15 @@ body {
   text-align: left;
 }
 
+#tangerine .form-group .Select {
+  margin-bottom: 10px;
+}
+
+#tangerine .form-group label a {
+  float: right;
+  font-size: 10px;
+}
+
 #tangerine input.form-control,
 #tangerine textarea.form-control {
   width: 100%;
