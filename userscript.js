@@ -18,6 +18,6 @@
     link.href = "https://moustacheful.github.io/tangerine/build/static/css/main.css";
     link.rel = "stylesheet";
 
-    document.body.append(link);
-    document.body.append(script);
+    document.body.appendChild(link);
+    document.body.appendChild(script);
 })();

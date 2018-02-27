@@ -28,7 +28,7 @@ const mountApplication = initialState => {
 
 const root = document.createElement("div");
 root.id = "root";
-document.body.append(root);
+document.body.appendChild(root);
 
 Pomelo.getProjects().then(projects => {
 	let initialState = { projects };

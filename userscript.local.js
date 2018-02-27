@@ -13,5 +13,5 @@
     var script;
     script = document.createElement("script");
     script.src = "https://localhost:5000/static/js/bundle.js";
-    document.body.append(script);
+    document.body.appendChild(script);
 })();
