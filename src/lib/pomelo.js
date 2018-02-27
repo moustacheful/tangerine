@@ -25,12 +25,12 @@ const Pomelo = {
 	},
 
 	getProjects() {
-		const result = Array.from(
-			document.querySelectorAll("#project_id option")
-		).map(option => ({
-			value: option.value,
-			label: option.textContent
-		}));
+		const result = Array.from(document.querySelectorAll("#project_id option"))
+			.filter(option => !!option.value)
+			.map(option => ({
+				value: option.value,
+				label: option.textContent
+			}));
 
 		return Promise.resolve(result);
 	},
