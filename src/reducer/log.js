@@ -1,11 +1,11 @@
-import _ from 'lodash';
-import moment from 'moment';
-import Pomelo from '../lib/pomelo';
-import Storage from '../lib/storage';
-import http from '../lib/http';
-import Toasts from '../components/Toasts';
+import _ from "lodash";
+import moment from "moment";
+import Pomelo from "../lib/pomelo";
+import Storage from "../lib/storage";
+import http from "../lib/http";
+import Toasts from "../components/Toasts";
 
-const namespace = 'LOG';
+const namespace = "LOG";
 export const IS_LOADING = `${namespace}:IS_LOADING`;
 export const SET_DATE = `${namespace}:SET_DATE`;
 export const SET_EVENTS = `${namespace}:SET_EVENTS`;
@@ -18,7 +18,7 @@ const defaultState = {
   loading: false,
   date: new Date(),
   selectedEventId: false,
-  events: [],
+  events: []
 };
 
 export default function(state = defaultState, action) {
@@ -26,14 +26,14 @@ export default function(state = defaultState, action) {
     case IS_LOADING: {
       return {
         ...state,
-        loading: action.value,
+        loading: action.value
       };
     }
 
     case SET_DATE: {
       return {
         ...state,
-        date: action.value,
+        date: action.value
       };
     }
 
@@ -42,24 +42,23 @@ export default function(state = defaultState, action) {
         ...state,
         events: action.value.map(event => {
           return { ...event, _hasChanged: false };
-        }),
+        })
       };
     }
 
     case CREATE_NEW_EVENT: {
-      console.log('default evnet is', Storage.get('defaultProject'))
-      const existingEvent = _.findIndex(state.events, { id: 'new' });
+      const existingEvent = _.findIndex(state.events, { id: "new" });
       const events = [...state.events];
       const newEvent = {
-        id: 'new',
+        id: "new",
         editable: true,
-        title: '',
-        description: '',
-        project: Storage.get('defaultProject') || '',
-        activity: Storage.get('defaultActivity') || '',
-        relatedURL: '',
+        title: "",
+        description: "",
+        project: Storage.get("defaultProject") || "",
+        activity: Storage.get("defaultActivity") || "",
+        relatedURL: "",
         billable: false,
-        ...action.value,
+        ...action.value
       };
 
       if (existingEvent > -1) {
@@ -70,7 +69,7 @@ export default function(state = defaultState, action) {
 
       return {
         ...state,
-        events,
+        events
       };
     }
 
@@ -79,7 +78,7 @@ export default function(state = defaultState, action) {
 
       return {
         ...state,
-        events,
+        events
       };
     }
 
@@ -95,19 +94,19 @@ export default function(state = defaultState, action) {
       events.splice(eventIndex, 1, {
         ...state.events[eventIndex],
         ...action.data,
-        _hasChanged: true,
+        _hasChanged: true
       });
 
       return {
         ...state,
-        events,
+        events
       };
     }
 
     case SET_SELECTED_EVENT_ID: {
       return {
         ...state,
-        selectedEventId: action.value,
+        selectedEventId: action.value
       };
     }
 
@@ -122,8 +121,8 @@ export const Actions = {
       dispatch({ type: SET_DATE, value: date });
       dispatch(
         Actions.fetchEvents(
-          moment(date).startOf('week'),
-          moment(date).endOf('week')
+          moment(date).startOf("week"),
+          moment(date).endOf("week")
         )
       );
     };
@@ -131,20 +130,20 @@ export const Actions = {
 
   deleteEvent(eventId) {
     return dispatch => {
-      if (eventId === 'new') return;
+      if (eventId === "new") return;
 
       dispatch({ type: IS_LOADING, value: true });
       http({
         url: `/daily_tasks/${eventId}`,
-        method: 'post',
-        data: { _method: 'delete' },
+        method: "post",
+        data: { _method: "delete" }
       })
         .then(({ data }) => {
           dispatch({ type: DELETE_EVENT, eventId });
-          Toasts.push('Eliminado de tu bitácora', 'success');
+          Toasts.push("Eliminado de tu bitácora", "success");
         })
         .catch(err => {
-          Toasts.push('Ocurrió un error eliminando de tu bitácora', 'danger');
+          Toasts.push("Ocurrió un error eliminando de tu bitácora", "danger");
         })
         .finally(() => dispatch({ type: IS_LOADING, value: false }));
     };
@@ -178,11 +177,11 @@ export const Actions = {
     return dispatch => {
       dispatch({
         type: CREATE_NEW_EVENT,
-        value: _.pick(options, ['start', 'end']),
+        value: _.pick(options, ["start", "end"])
       });
       dispatch({
         type: SET_SELECTED_EVENT_ID,
-        value: 'new',
+        value: "new"
       });
     };
   },
@@ -191,17 +190,17 @@ export const Actions = {
     return (dispatch, getState) => {
       dispatch({ type: IS_LOADING, value: true });
       http({
-        method: 'post',
-        url: '/daily_tasks',
-        data,
+        method: "post",
+        url: "/daily_tasks",
+        data
       })
         .then(({ data }) => {
-          dispatch({ type: DELETE_EVENT, value: 'new' });
+          dispatch({ type: DELETE_EVENT, value: "new" });
           dispatch(Actions.setDate(getState().log.date));
-          Toasts.push('Agregado a tu bitácora con éxito', 'success');
+          Toasts.push("Agregado a tu bitácora con éxito", "success");
         })
         .catch(() => {
-          Toasts.push('Ocurrió un error guardando en tu bitácora', 'danger');
+          Toasts.push("Ocurrió un error guardando en tu bitácora", "danger");
         })
         .finally(() => dispatch({ type: IS_LOADING, value: false }));
     };
@@ -211,8 +210,8 @@ export const Actions = {
     return dispatch => {
       dispatch({
         type: SET_SELECTED_EVENT_ID,
-        value: id,
+        value: id
       });
     };
-  },
+  }
 };
