@@ -1,3 +1,5 @@
+import moment from "moment";
+import "moment/locale/es";
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
