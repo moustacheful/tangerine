@@ -11,6 +11,21 @@ body {
   width: 100%;
 }
 
+#tangerine .daily-totals {
+  border-top: 2px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+#tangerine .daily-totals div {
+  border-right: 1px solid #ddd;
+  text-align: center;
+}
+
+#tangerine .daily-totals div:first-child {
+  width: 70px;  
+  border-left: 1px solid #ddd;
+  font-weight: bold;
+}
+
 #tangerine .pane {
   background: white;
   padding: 20px 0px;
@@ -129,7 +144,9 @@ body {
   margin: 0 auto;
   height: 800px;
 }
-
+.flex-parent {
+  display: flex;
+}
 .flex-extend {
   flex: 1;
 }

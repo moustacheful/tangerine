@@ -4,7 +4,10 @@ import { connect } from "react-redux";
 import moment from "moment";
 
 import { Actions as LogActions } from "./reducer/log";
-import { selectedEventSelector, getTotalsByDaySelector } from "./reducer/selectors";
+import {
+  selectedEventSelector,
+  getTotalsByDaySelector
+} from "./reducer/selectors";
 import Calendar from "./components/Calendar";
 import Form from "./components/Form";
 import { ToastsComponent } from "./components/Toasts";
@@ -12,17 +15,15 @@ import { ToastsComponent } from "./components/Toasts";
 const DailyTotals = ({ totals }) => {
   if (!totals) return null;
 
-  const style = {
-    width: (100 / 8) + '%'
-  }
-  return <div style={{display: 'flex'}} className="rbc-row">
-    <div style={style} className="rbc-label rbc-header-gutter"></div>
-    {totals.map((val) => 
-      <div style={style} className="rbc-header">{val}</div>
-    )}
-  </div>
-}
-
+  return (
+    <div className="daily-totals flex-parent">
+      <div>Total</div>
+      {totals.map((total, i) => (
+        <div key={i} className="flex-extend">{total} hrs</div>
+      ))}
+    </div>
+  );
+};
 
 class App extends Component {
   state = {
