@@ -1,14 +1,13 @@
-import _ from 'lodash';
-import Select from 'react-select';
-import React from 'react';
-import $ from 'jquery';
-import autobind from 'autobind-decorator';
-import moment from 'moment';
+import _ from "lodash";
+import Select from "react-select";
+import React from "react";
+import autobind from "autobind-decorator";
+import moment from "moment";
 
-import http from '../lib/http';
-import Pomelo from '../lib/pomelo';
-import Storage from '../lib/storage';
-
+import http from "../lib/http";
+import Pomelo from "../lib/pomelo";
+import Storage from "../lib/storage";
+import { getNodeFromString } from "../lib/util";
 
 class EnhancedSelect extends React.Component {
   render() {
@@ -20,7 +19,7 @@ class EnhancedSelect extends React.Component {
         name={name}
         onChange={option => {
           onChange({
-            target: { name, value: option.value },
+            target: { name, value: option.value }
           });
         }}
       />
@@ -36,7 +35,7 @@ class Form extends React.Component {
     timeMap: {},
     formData: {},
     event: {},
-    activityId: undefined,
+    activityId: undefined
   };
 
   componentWillMount() {
@@ -46,7 +45,7 @@ class Form extends React.Component {
   componentDidMount() {
     if (this.props.event) {
       this.setState({
-        event: this.props.event,
+        event: this.props.event
       });
     }
 
@@ -57,24 +56,18 @@ class Form extends React.Component {
     this.getHTMLForm().then(({ data }) => {
       const [match] = data.match(/\s"(.*)"\s/);
       const htmlString = JSON.parse(match.trim());
-      const html = $(htmlString);
+      const html = getNodeFromString(htmlString);
 
       this.setState({
-        authenticityToken: html
-          .find('[name=authenticity_token]')
-          .first()
-          .val(),
-        userId: html
-          .find('#daily_task_user_id')
-          .first()
-          .val(),
-        timeMap: html
-          .find('#daily_task_start_time option')
-          .toArray()
-          .reduce((acc, item) => {
-            acc[item.textContent] = item.value;
-            return acc;
-          }, {}),
+        authenticityToken: html.querySelector("[name=authenticity_token]")
+          .value,
+        userId: html.querySelector("#daily_task_user_id").value,
+        timeMap: Array.from(
+          html.querySelectorAll("#daily_task_start_time option")
+        ).reduce((acc, item) => {
+          acc[item.textContent] = item.value;
+          return acc;
+        }, {})
       });
     });
   }
@@ -82,26 +75,26 @@ class Form extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.event && nextProps.event.id !== this.props.event.id) {
       this.setState({
-        event: nextProps.event,
+        event: nextProps.event
       });
     } else {
       const updated = {
         start: this.props.event.start,
-        end: this.props.event.end,
+        end: this.props.event.end
       };
 
       this.setState({
         event: {
           ...this.state.event,
-          ...updated,
-        },
+          ...updated
+        }
       });
     }
   }
 
   toggleDebug() {
     this.setState({
-      showDebug: !this.state.showDebug,
+      showDebug: !this.state.showDebug
     });
   }
   mapEventToForm() {
@@ -112,26 +105,28 @@ class Form extends React.Component {
 
     const taskDate = start.format(Pomelo.dateFormat);
     const taskStart = start.format(Pomelo.timeFormat);
-    const taskHours = end.diff(start, 'hours', true);
+    const taskHours = end.diff(start, "hours", true);
 
     return {
       authenticity_token: this.state.authenticityToken,
-      utf8: '&#x2713;',
-      'daily_task[user_id]': this.state.userId,
-      'daily_task[name]': event.title,
-      'daily_task[description]': event.description,
-      'daily_task[project_id]': event.project,
-      'daily_task[ticket_url]': event.relatedURL,
-      'daily_task[activity_id]': event.activity,
-      'daily_task[date]': taskDate,
-      'daily_task[start_time]': this.state.timeMap[taskStart],
-      'daily_task[hours_amount]': taskHours,
-      'daily_task[is_not_billable]': 0,
+      utf8: "&#x2713;",
+      "daily_task[user_id]": this.state.userId,
+      "daily_task[name]": event.title,
+      "daily_task[description]": event.description,
+      "daily_task[project_id]": event.project,
+      "daily_task[ticket_url]": event.relatedURL,
+      "daily_task[activity_id]": event.activity,
+      "daily_task[date]": taskDate,
+      "daily_task[start_time]": this.state.timeMap[taskStart],
+      "daily_task[hours_amount]": taskHours,
+      "daily_task[is_not_billable]": 0
     };
   }
 
   getHTMLForm() {
-    const url = $('#btn-create-daily-task').attr('href');
+    const url = document
+      .querySelector("#btn-create-daily-task")
+      .getAttribute("href");
     return http.get(url + `?_=${Date.now()}`);
   }
 
@@ -140,11 +135,10 @@ class Form extends React.Component {
       {
         event: {
           ...this.state.event,
-          [evt.target.name]:
-            evt.target.type === 'checkbox'
-              ? evt.target.checked
-              : evt.target.value,
-        },
+          [evt.target.name]: evt.target.type === "checkbox"
+            ? evt.target.checked
+            : evt.target.value
+        }
       },
       state => {
         this.updateEvent(this.state.event.id, this.state.event);
@@ -164,7 +158,7 @@ class Form extends React.Component {
   getTasksForProject(projectId) {
     if (!projectId) return Promise.resolve([]);
     this.setState({
-      loadingTasks: true,
+      loadingTasks: true
     });
     return Pomelo.getTasksForProject(projectId).then(tasks => {
       this.setState({ tasks, loadingTasks: false });
@@ -229,11 +223,10 @@ class Form extends React.Component {
 
         <div className="form-group">
           <label htmlFor="t_event-project">
-            Proyecto{' '}
+            Proyecto{" "}
             <a
               onClick={() =>
-                Storage.set('defaultProject', this.state.event.project)
-              }
+                Storage.set("defaultProject", this.state.event.project)}
               href="#"
             >
               Guardar como favorito
@@ -249,14 +242,13 @@ class Form extends React.Component {
             options={this.props.projects}
           />
         </div>
-        {!!this.state.tasks.length && (
+        {!!this.state.tasks.length &&
           <div className="form-group">
             <label htmlFor="t_event-activity">
-              Tipo de tarea{' '}
+              Tipo de tarea{" "}
               <a
                 onClick={() =>
-                  Storage.set('defaultActivity', this.state.event.activity)
-                }
+                  Storage.set("defaultActivity", this.state.event.activity)}
                 href="#"
               >
                 Guardar como favorita
@@ -272,16 +264,14 @@ class Form extends React.Component {
               options={this.state.tasks}
               isLoading={this.state.loadingTasks}
             />
-          </div>
-        )}
+          </div>}
 
         <div className="tools">
-          {this.state.event.id === 'new' && (
+          {this.state.event.id === "new" &&
             <button className="btn btn-primary" type="submit">
               Enviar
-            </button>
-          )}
-          {this.state.event.id !== 'new' && (
+            </button>}
+          {this.state.event.id !== "new" &&
             <div>
               <button
                 onClick={this.delete}
@@ -293,21 +283,15 @@ class Form extends React.Component {
               <button onClick={this.delete} className="btn btn-danger">
                 Borrar
               </button>
-            </div>
-          )}
+            </div>}
         </div>
         <a href="#" onClick={this.toggleDebug}>
           Ver info debug
         </a>
-        {this.state.showDebug && (
+        {this.state.showDebug &&
           <pre>
-            {JSON.stringify(
-              _.pick(this.state.event, ['start', 'end']),
-              null,
-              '  '
-            )}
-          </pre>
-        )}
+            {JSON.stringify(this.state, null, "  ")}
+          </pre>}
       </form>
     );
   }
