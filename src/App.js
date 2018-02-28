@@ -4,10 +4,26 @@ import { connect } from "react-redux";
 import moment from "moment";
 
 import { Actions as LogActions } from "./reducer/log";
-import { selectedEventSelector } from "./reducer/selectors";
+import {
+  selectedEventSelector,
+  getTotalsByDaySelector
+} from "./reducer/selectors";
 import Calendar from "./components/Calendar";
 import Form from "./components/Form";
 import { ToastsComponent } from "./components/Toasts";
+
+const DailyTotals = ({ totals }) => {
+  if (!totals) return null;
+
+  return (
+    <div className="daily-totals flex-parent">
+      <div>Total</div>
+      {totals.map((total, i) => (
+        <div key={i} className="flex-extend">{total} hrs</div>
+      ))}
+    </div>
+  );
+};
 
 class App extends Component {
   state = {
@@ -47,6 +63,7 @@ class App extends Component {
                   createNewEvent={this.props.createNewEvent}
                   setSelectedEventId={this.props.setSelectedEventId}
                 />
+                <DailyTotals totals={this.props.log.totals} />
               </div>
 
               {this.props.log.selectedEvent
@@ -79,7 +96,8 @@ export default connect(
       ...state,
       log: {
         ...state.log,
-        selectedEvent: selectedEventSelector(state)
+        selectedEvent: selectedEventSelector(state),
+        totals: getTotalsByDaySelector(state)
       }
     };
   },
