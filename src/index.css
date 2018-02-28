@@ -21,7 +21,7 @@ body {
 }
 
 #tangerine .daily-totals div:first-child {
-  width: 70px;  
+  width: 45px;  
   border-left: 1px solid #ddd;
   font-weight: bold;
 }
