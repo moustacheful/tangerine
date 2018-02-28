@@ -74,13 +74,9 @@ const Pomelo = {
 		return Array.from(
 			doc.querySelectorAll("table.table-striped tbody tr")
 		).map(el => {
-			const [
-				duration,
-				startTime,
-				date,
-				title
-				// url,
-			] = Array.from(el.children).map(c => c.textContent);
+			const [duration, startTime, date, title] = Array.from(el.children).map(
+				c => c.textContent
+			);
 
 			let description = el.children[4].querySelector("a");
 			description =
@@ -89,8 +85,11 @@ const Pomelo = {
 			description = description === "Sin Comentario" ? "" : description;
 
 			const id = el.getAttribute("data-daily-task-id");
-			const activity = el.children[6].getAttribute("data-activity-id");
 			const project = el.children[5].getAttribute("data-project-id");
+			const activity = el.children[6].getAttribute("data-activity-id");
+
+			const relatedURLEl = el.children[7].querySelector("a");
+			const relatedURL = relatedURLEl ? relatedURLEl.getAttribute("href") : "";
 
 			const start = moment(
 				`${date} ${startTime}`,
@@ -104,7 +103,8 @@ const Pomelo = {
 				title,
 				activity,
 				description,
-				project
+				project,
+				relatedURL
 			};
 		});
 	}
