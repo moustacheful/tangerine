@@ -86,6 +86,7 @@ export default function(state = defaultState, action) {
       const eventIndex = _.findIndex(state.events, { id: action.eventId });
 
       if (eventIndex === -1) {
+        console.log(action.eventId, "not found");
         return;
       }
 
@@ -94,7 +95,9 @@ export default function(state = defaultState, action) {
       events.splice(eventIndex, 1, {
         ...state.events[eventIndex],
         ...action.data,
-        _hasChanged: true
+        _hasChanged: action.data._hasChanged !== undefined
+          ? action.data._hasChanged
+          : true
       });
 
       return {
@@ -198,6 +201,29 @@ export const Actions = {
           dispatch({ type: DELETE_EVENT, value: "new" });
           dispatch(Actions.setDate(getState().log.date));
           Toasts.push("Agregado a tu bitácora con éxito", "success");
+        })
+        .catch(() => {
+          Toasts.push("Ocurrió un error guardando en tu bitácora", "danger");
+        })
+        .finally(() => dispatch({ type: IS_LOADING, value: false }));
+    };
+  },
+
+  saveEvent(eventId, data) {
+    return dispatch => {
+      dispatch({ type: IS_LOADING, value: true });
+      http({
+        url: `/daily_tasks/${eventId}`,
+        method: "post",
+        data: { _method: "put", ...data }
+      })
+        .then(() => {
+          dispatch({
+            type: UPDATE_EVENT,
+            eventId,
+            data: { _hasChanged: false }
+          });
+          Toasts.push("Entrada actualizada", "success");
         })
         .catch(() => {
           Toasts.push("Ocurrió un error guardando en tu bitácora", "danger");

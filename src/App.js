@@ -10,20 +10,8 @@ import {
 } from "./reducer/selectors";
 import Calendar from "./components/Calendar";
 import Form from "./components/Form";
+import DailyTotals from "./components/DailyTotals";
 import { ToastsComponent } from "./components/Toasts";
-
-const DailyTotals = ({ totals }) => {
-  if (!totals) return null;
-
-  return (
-    <div className="daily-totals flex-parent">
-      <div>Total</div>
-      {totals.map((total, i) => (
-        <div key={i} className="flex-extend">{total} hrs</div>
-      ))}
-    </div>
-  );
-};
 
 class App extends Component {
   state = {
@@ -74,6 +62,7 @@ class App extends Component {
                       saveNewEvent={this.props.saveNewEvent}
                       updateEvent={this.props.updateEvent}
                       deleteEvent={this.props.deleteEvent}
+                      saveEvent={this.props.saveEvent}
                       setEditableEvent={this.props.updateEvent}
                     />
                   </aside>

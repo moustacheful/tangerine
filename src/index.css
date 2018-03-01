@@ -128,14 +128,13 @@ body {
   background: #eaeaea;
 }
 
-
-.rbc-event.event-modified {
-  border: 1px solid #de9d02;
-  color: black;
-  background: #ffb400;
-}
-.rbc-selected.event-modified {
-  background: #efa902;
+.rbc-event.event-modified:after {
+  font-family: 'FontAwesome';
+  content: '\f071 ';
+  position: absolute;
+  bottom: 0px;
+  right: 5px;
+  font-size: 10px;
 }
 
 .flex-container {

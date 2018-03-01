@@ -77,16 +77,17 @@ class Form extends React.Component {
       this.setState({
         event: nextProps.event
       });
-    } else {
-      const updated = {
-        start: this.props.event.start,
-        end: this.props.event.end
-      };
-
+    } else if (
+      nextProps.event.start !== this.state.event.start ||
+      nextProps.event.end !== this.state.event.end
+    ) {
       this.setState({
         event: {
           ...this.state.event,
-          ...updated
+          ...{
+            start: nextProps.event.start,
+            end: nextProps.event.end
+          }
         }
       });
     }
@@ -115,7 +116,9 @@ class Form extends React.Component {
       "daily_task[description]": event.description,
       "daily_task[project_id]": event.project,
       "daily_task[ticket_url]": event.relatedURL,
-      "daily_task[activity_id]": event.activity,
+      "daily_task[activity_id]": this.isActivityValid()
+        ? event.activity
+        : undefined,
       "daily_task[date]": taskDate,
       "daily_task[start_time]": this.state.timeMap[taskStart],
       "daily_task[hours_amount]": taskHours,
@@ -135,6 +138,7 @@ class Form extends React.Component {
       {
         event: {
           ...this.state.event,
+          _hasChanged: true,
           [evt.target.name]: evt.target.type === "checkbox"
             ? evt.target.checked
             : evt.target.value
@@ -168,7 +172,15 @@ class Form extends React.Component {
 
   delete(evt) {
     evt.preventDefault();
-    this.props.deleteEvent(this.state.event.id);
+    const confirmedDeletion = window.confirm(
+      `Estás seguro que quieres eliminar '${this.state.event.title}' ?`
+    );
+    if (confirmedDeletion) this.props.deleteEvent(this.state.event.id);
+  }
+
+  saveEvent(evt) {
+    evt.preventDefault();
+    this.props.saveEvent(this.state.event.id, this.mapEventToForm());
   }
 
   submit(evt) {
@@ -176,6 +188,12 @@ class Form extends React.Component {
 
     const data = this.mapEventToForm();
     this.props.saveNewEvent(data);
+  }
+
+  isActivityValid() {
+    return this.state.tasks
+      .map(i => i.value)
+      .includes(this.state.event.activity);
   }
 
   render() {
@@ -224,13 +242,14 @@ class Form extends React.Component {
         <div className="form-group">
           <label htmlFor="t_event-project">
             Proyecto{" "}
-            <a
-              onClick={() =>
-                Storage.set("defaultProject", this.state.event.project)}
-              href="#"
-            >
-              Guardar como favorito
-            </a>
+            {this.state.event.project &&
+              <a
+                onClick={() =>
+                  Storage.set("defaultProject", this.state.event.project)}
+                href="#"
+              >
+                Guardar como predeterminado
+              </a>}
           </label>
           <EnhancedSelect
             id="t_event-project"
@@ -246,13 +265,15 @@ class Form extends React.Component {
           <div className="form-group">
             <label htmlFor="t_event-activity">
               Tipo de tarea{" "}
-              <a
-                onClick={() =>
-                  Storage.set("defaultActivity", this.state.event.activity)}
-                href="#"
-              >
-                Guardar como favorita
-              </a>
+              {this.state.event.activity &&
+                this.isActivityValid() &&
+                <a
+                  onClick={() =>
+                    Storage.set("defaultActivity", this.state.event.activity)}
+                  href="#"
+                >
+                  Guardar como predeterminado
+                </a>}
             </label>
             <EnhancedSelect
               id="t_event-activity"
@@ -273,11 +294,7 @@ class Form extends React.Component {
             </button>}
           {this.state.event.id !== "new" &&
             <div>
-              <button
-                onClick={this.delete}
-                className="btn btn-warning"
-                disabled
-              >
+              <button onClick={this.saveEvent} className="btn btn-warning">
                 Actualizar
               </button>
               <button onClick={this.delete} className="btn btn-danger">
