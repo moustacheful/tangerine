@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 import autobind from "autobind-decorator";
 import moment from "moment";
 import BigCalendar from "react-big-calendar";
@@ -15,13 +16,38 @@ BigCalendar.momentLocalizer(moment);
 const DndBigCalendar = withDragAndDrop(BigCalendar);
 
 class Calendar extends React.Component {
+	state = { colorMap: {} };
+	componentWillMount() {
+		this.buildColorMap(this.props.events);
+	}
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.events !== this.props.events) {
+			this.buildColorMap(newProps.events);
+		}
+	}
+
+	buildColorMap(events) {
+		this.setState({
+			colorMap: _(events)
+				.map(e => e.project)
+				.uniq()
+				.reduce((acc, projectKey, i) => {
+					console.log(i);
+					acc[projectKey] = i;
+					return acc;
+				}, {})
+		});
+	}
+
 	eventPropGetter(event) {
 		const isNew = event.id === "new";
 
 		return {
 			className: classify({
 				"event-is-new": isNew,
-				"event-modified": !isNew && event._hasChanged
+				"event-modified": !isNew && event._hasChanged,
+				["event-color-" + this.state.colorMap[event.project]]: true
 			})
 		};
 	}

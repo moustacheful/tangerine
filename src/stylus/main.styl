@@ -1,0 +1,216 @@
+@require 'variables'
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+#tangerine {
+  position: fixed;
+  top: 41px;
+  left: 0;
+  width: 100%;
+}
+
+#tangerine .daily-totals {
+  border-top: 2px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+#tangerine .daily-totals div {
+  border-right: 1px solid #ddd;
+  text-align: center;
+}
+
+#tangerine .daily-totals div:first-child {
+  width: 45px;  
+  border-left: 1px solid #ddd;
+  font-weight: bold;
+}
+
+#tangerine .pane {
+  background: white;
+  padding: 20px 0px;
+  animation: slide-down 0.3s ease both;
+}
+
+#tangerine aside {
+  box-sizing: border-box;
+  width: 350px;
+  padding: 20px;
+  padding-top: 40px;
+  text-align: left;
+}
+
+#tangerine .form-group .Select {
+  margin-bottom: 10px;
+}
+
+#tangerine .form-group label a {
+  float: right;
+  font-size: 10px;
+}
+
+#tangerine input.form-control,
+#tangerine textarea.form-control {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 10px;
+}
+
+#tangerine select.form-control {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#tangerine textarea.form-control {
+  padding: 10px;
+  height: 150px;
+}
+
+#tangerine .btn-toggle {
+  position: absolute;
+  display: block;
+  top: 0px;
+  right: 0px;
+  z-index: 100;
+}
+
+#tangerine .tools {
+  margin: 10px 0;
+}
+
+#tangerine .tools > * {
+  margin-right: 10px;
+}
+
+#tangerine .loading-screen {
+  background: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .25s ease both;
+}
+
+#tangerine .loading-screen:after {
+  font-family: 'FontAwesome';
+  content: '\f013';
+  animation: spin 2s linear infinite;
+  display: block;
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  line-height: 36px;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+}
+
+
+for $color, $i in $colors
+  .event-color-{$i}
+    background $color !important
+    border 1px solid darken($color, 10%) !important
+    transition background .5s ease, border .5s ease, opacity .5s ease !important
+    
+    if light($color)
+      color lightness($color, 30%)
+    else
+      color lightness($color, 90%)
+         
+    
+    &:hover,
+    &.rbc-selected
+      background darken($color, 10%) !important
+      border 1px solid darken($color, 20%) !important
+
+.rbc-event.event-is-new {
+  border: 1px dashed grey;
+  color: #666;
+  background: #fafafa;
+}
+.rbc-selected.event-is-new {
+  background: #eaeaea;
+}
+
+.rbc-event.event-modified:after {
+  font-family: 'FontAwesome';
+  content: '\f071 ';
+  position: absolute;
+  bottom: -3px;
+  left: 5px;
+  font-size: 10px;
+}
+
+.flex-container {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 800px;
+}
+.flex-parent {
+  display: flex;
+}
+.flex-extend {
+  flex: 1;
+}
+
+@keyframes slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+}
+
+.rbc-row:nth-child(2) {
+  display: none;
+}
+
+.rbc-time-slot {
+  min-height: 32px;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border-color: #dadada;
+}
+
+.rbc-event-content {
+  font-size: 11px;
+}
+
+.rbc-event:hover .rbc-event-label{
+  display: block;
+}
+.rbc-event-label {
+  font-size: 10px;
+}
+
+.toasts-container {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  width: 450px;
+  z-index: 1001;
+}
+.toast {
+  margin-bottom: 10px;
+}
