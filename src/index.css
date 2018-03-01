@@ -78,6 +78,10 @@ body {
   margin: 10px 0;
 }
 
+#tangerine .tools > * {
+  margin-right: 10px;
+}
+
 #tangerine .loading-screen {
   background: rgba(255, 255, 255, 0.6);
   position: absolute;
@@ -132,8 +136,8 @@ body {
   font-family: 'FontAwesome';
   content: '\f071 ';
   position: absolute;
-  bottom: 0px;
-  right: 5px;
+  bottom: -3px;
+  left: 5px;
   font-size: 10px;
 }
 

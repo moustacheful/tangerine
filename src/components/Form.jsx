@@ -292,15 +292,14 @@ class Form extends React.Component {
             <button className="btn btn-primary" type="submit">
               Enviar
             </button>}
-          {this.state.event.id !== "new" &&
-            <div>
-              <button onClick={this.saveEvent} className="btn btn-warning">
-                Actualizar
-              </button>
-              <button onClick={this.delete} className="btn btn-danger">
-                Borrar
-              </button>
-            </div>}
+          {this.state.event.id !== "new" && [
+            <button onClick={this.saveEvent} className="btn btn-warning">
+              Actualizar
+            </button>,
+            <button onClick={this.delete} className="btn btn-danger">
+              Borrar
+            </button>
+          ]}
         </div>
         <a href="#" onClick={this.toggleDebug}>
           Ver info debug
