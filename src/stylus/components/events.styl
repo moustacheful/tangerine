@@ -1,0 +1,59 @@
+
+.rbc-event
+  border-radius 0
+
+for $color, $i in $colors
+  .event-color-{$i}
+    background $color !important
+    border 1px solid darken($color, 10%) !important
+    transition background .5s ease, border .5s ease, opacity .5s ease !important
+
+    if light($color)
+      color lightness($color, 20%)
+    else
+      color lightness($color, 90%)
+
+    &:hover,
+    &.rbc-selected
+      background darken($color, 10%) !important
+      border 1px solid darken($color, 20%) !important
+    &.event-modified
+      background alpha($color, 60%) !important
+      border 1px dashed darken($color, 30%) !important
+
+.rbc-event.event-is-new
+  border: 1px dashed grey
+  color: #666
+  background: #fafafa
+
+.rbc-selected.event-is-new
+  background: #eaeaea
+
+.rbc-event.event-modified
+  border-style dashed !important
+  &:after
+    font-family 'FontAwesome'
+    content '\f071 '
+    position absolute
+    bottom -3px
+    left 5px
+    font-size 10px
+
+
+
+
+.rbc-time-slot
+  min-height: 32px
+
+.rbc-day-slot .rbc-time-slot
+  border-color: #dadada
+
+.rbc-event-content
+  font-size: 11px
+
+.rbc-event:hover .rbc-event-label
+  display: block
+
+.rbc-event-label
+  font-size: 10px
+
