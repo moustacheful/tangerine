@@ -26,6 +26,7 @@
     background: white
     padding: 20px 0px
     animation: slide-down 0.3s ease both
+    height 90vh
 
 
   aside
@@ -39,6 +40,8 @@
   .form-group
     .Select
       margin-bottom: 10px
+      input
+        height auto
 
     label a
       float: right
@@ -102,14 +105,16 @@
       line-height: 36px
       text-align: center
 
-.flex-container
-  display: flex
-  max-width: 1200px
-  margin: 0 auto
-  height: 800px
+.full-height
+  height 100%
 
 .flex-parent
   display: flex
 
+  &.flex-column
+    flex-direction column
 .flex-extend
   flex: 1
+
+.calendar-container
+  height 100%

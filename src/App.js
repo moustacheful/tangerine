@@ -31,17 +31,21 @@ class App extends Component {
 
         {!this.props.dialog.collapsed &&
           <div className="pane">
-            <div className="flex-container">
-              <div className="flex-extend">
-                <Calendar
-                  date={this.props.log.date}
-                  setDate={this.props.setDate}
-                  events={this.props.log.events}
-                  updateEvent={this.props.updateEvent}
-                  createNewEvent={this.props.createNewEvent}
-                  setSelectedEventId={this.props.setSelectedEventId}
-                />
-                <DailyTotals totals={this.props.log.totals} />
+            <div className="flex-parent full-height">
+              <div className="flex-extend full-height">
+                <div className="flex-parent flex-column full-height">
+                  <div className="calendar-container flex-extend">
+                    <Calendar
+                      date={this.props.log.date}
+                      setDate={this.props.setDate}
+                      events={this.props.log.events}
+                      updateEvent={this.props.updateEvent}
+                      createNewEvent={this.props.createNewEvent}
+                      setSelectedEventId={this.props.setSelectedEventId}
+                    />
+                  </div>
+                  <DailyTotals totals={this.props.log.totals} />
+                </div>
               </div>
 
               {this.props.log.selectedEvent
