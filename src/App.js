@@ -1,9 +1,10 @@
 import autobind from "autobind-decorator";
-import React, { Component } from "react";
+import { h, Component } from "preact";
 import { connect } from "react-redux";
 import moment from "moment";
 
 import { Actions as LogActions } from "./reducer/log";
+import { Actions as DialogActions } from "./reducer/dialog";
 import {
   selectedEventSelector,
   getTotalsByDaySelector
@@ -14,32 +15,21 @@ import DailyTotals from "./components/DailyTotals";
 import { ToastsComponent } from "./components/Toasts";
 
 class App extends Component {
-  state = {
-    collapsed: true,
-    editableEvent: false
-  };
-
-  componentWillMount() {
-    this.props.fetchEvents(moment().startOf("week"), moment().endOf("week"));
-  }
-
-  toggle() {
-    this.setState({ collapsed: !this.state.collapsed });
-  }
-
   render() {
-    const collapsedClass = this.state.collapsed
+    const collapsedClass = this.props.dialog.collapsed
       ? "is-collapsed"
       : "is-expanded";
 
     return (
       <div id="tangerine" className={`app ${collapsedClass}`}>
-        {this.props.log.loading && <div className="loading-screen" />}
-        <button className="btn-toggle btn btn-primary" onClick={this.toggle}>
-          {this.state.collapsed ? "Ver" : "Ocultar"} agenda
+        <button
+          className="btn-toggle btn btn-primary"
+          onClick={this.props.toggleDialog}
+        >
+          {this.props.dialog.collapsed ? "Ver" : "Ocultar"} agenda
         </button>
 
-        {!this.state.collapsed &&
+        {!this.props.dialog.collapsed &&
           <div className="pane">
             <div className="flex-container">
               <div className="flex-extend">
@@ -74,6 +64,7 @@ class App extends Component {
             </div>
           </div>}
         <ToastsComponent />
+        {this.props.log.loading && <div className="loading-screen" />}
       </div>
     );
   }
@@ -90,5 +81,5 @@ export default connect(
       }
     };
   },
-  { ...LogActions }
+  { ...LogActions, ...DialogActions }
 )(autobind(App));

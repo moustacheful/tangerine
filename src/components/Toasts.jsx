@@ -1,5 +1,5 @@
 import autobind from "autobind-decorator";
-import React from "react";
+import { h, Component } from "preact";
 import { EventEmitter } from "events";
 
 const eventBus = new EventEmitter();
@@ -9,7 +9,7 @@ export default {
   }
 };
 
-class Toasts extends React.Component {
+class Toasts extends Component {
   constructor() {
     super();
     eventBus.on("push", item => {

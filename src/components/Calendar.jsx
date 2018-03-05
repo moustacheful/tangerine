@@ -1,4 +1,5 @@
-import React from "react";
+import { h, Component } from "preact";
+import _ from "lodash";
 import autobind from "autobind-decorator";
 import moment from "moment";
 import BigCalendar from "react-big-calendar";
@@ -14,14 +15,47 @@ BigCalendar.momentLocalizer(moment);
 // Drag-and-drop-ize
 const DndBigCalendar = withDragAndDrop(BigCalendar);
 
-class Calendar extends React.Component {
+class Calendar extends Component {
+	state = { colorMap: {} };
+	getColorClass(key) {
+		const { colorMap } = this.state;
+		if (key in colorMap) {
+			return colorMap[key];
+		}
+
+		const nextIndex = Object.keys(colorMap).length % 15;
+
+		this.setState({
+			colorMap: {
+				...colorMap,
+				[key]: nextIndex
+			}
+		});
+
+		return nextIndex;
+	}
+
+	buildColorMap(events) {
+		this.setState({
+			colorMap: _(events)
+				.map(e => e.project)
+				.uniq()
+				.reduce((acc, projectKey, i) => {
+					console.log(i);
+					acc[projectKey] = i;
+					return acc;
+				}, {})
+		});
+	}
+
 	eventPropGetter(event) {
 		const isNew = event.id === "new";
-
+		const colorClassId = this.getColorClass(event.project);
 		return {
 			className: classify({
 				"event-is-new": isNew,
-				"event-modified": !isNew && event._hasChanged
+				"event-modified": !isNew && event._hasChanged,
+				["event-color-" + colorClassId]: true
 			})
 		};
 	}
