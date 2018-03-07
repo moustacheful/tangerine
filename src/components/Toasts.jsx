@@ -1,5 +1,5 @@
 import autobind from "autobind-decorator";
-import { h, Component } from "preact";
+import React, { Component } from "react";
 import { EventEmitter } from "events";
 
 const eventBus = new EventEmitter();

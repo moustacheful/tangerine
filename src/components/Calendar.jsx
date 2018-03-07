@@ -1,4 +1,4 @@
-import { h, Component } from "preact";
+import React, { Component } from "react";
 import _ from "lodash";
 import autobind from "autobind-decorator";
 import moment from "moment";
@@ -17,11 +17,17 @@ const DndBigCalendar = withDragAndDrop(BigCalendar);
 const messages = {
   next: "Siguiente",
   previous: "Anterior",
-  today: "Hoy"
+  today: "Hoy",
 };
 
 class Calendar extends Component {
-  state = { ctrlModifier: false, colorMap: {} };
+  state = { ctrlModifier: false };
+
+  constructor() {
+    super();
+    this.colorMap = {};
+  }
+
   componentDidMount() {
     document.addEventListener("keydown", this.onModifierChange);
     document.addEventListener("keyup", this.onModifierChange);
@@ -37,26 +43,23 @@ class Calendar extends Component {
 
     // We only need ctrl for now
     this.setState({
-      ctrlModifier: evt.type === "keydown" ? true : false
+      ctrlModifier: evt.type === "keydown" ? true : false,
     });
   }
 
   getColorClass(key) {
     if (!key) return;
 
-    const { colorMap } = this.state;
-    if (key in colorMap) {
-      return colorMap[key];
+    if (key in this.colorMap) {
+      return this.colorMap[key];
     }
 
-    const nextIndex = Object.keys(colorMap).length % 15;
+    const nextIndex = Object.keys(this.colorMap).length % 15;
 
-    this.setState({
-      colorMap: {
-        ...colorMap,
-        [key]: nextIndex
-      }
-    });
+    this.colorMap = {
+      ...this.colorMap,
+      [key]: nextIndex,
+    };
 
     return nextIndex;
   }
@@ -69,7 +72,7 @@ class Calendar extends Component {
         .reduce((acc, projectKey, i) => {
           acc[projectKey] = i;
           return acc;
-        }, {})
+        }, {}),
     });
   }
 
@@ -84,8 +87,8 @@ class Calendar extends Component {
         "event-is-new": isNew,
         "event-modified": event._hasChanged,
         "event-selected": isSelected,
-        ["event-color-" + colorClassId]: true
-      })
+        ["event-color-" + colorClassId]: true,
+      }),
     };
   }
 
@@ -138,7 +141,7 @@ class Calendar extends Component {
 
             const res = [optionalMinutes(start), optionalMinutes(end)];
             return res.join(" - ");
-          }
+          },
         }}
       />
     );

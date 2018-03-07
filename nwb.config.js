@@ -2,7 +2,7 @@ const webpack = require("webpack");
 
 module.exports = nwb => {
 	return {
-		type: "preact-app",
+		type: "react-app",
 		webpack: {
 			publicPath: "https://localhost:5000/",
 			rules: {

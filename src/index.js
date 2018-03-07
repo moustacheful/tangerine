@@ -3,7 +3,8 @@ import "moment/locale/es";
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
-import { h, render } from "preact";
+import React from "react";
+import ReactDOM from "react-dom";
 import Pomelo from "./lib/pomelo";
 import App from "./App";
 import reducer from "./reducer";
@@ -14,24 +15,24 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./stylus/main.styl";
 
 const store = createStore(
-	reducer,
-	{
-		projects: Pomelo.getProjects()
-	},
-	applyMiddleware(thunk)
+  reducer,
+  {
+    projects: Pomelo.getProjects(),
+  },
+  applyMiddleware(thunk)
 );
 
 store.dispatch(
-	Actions.fetchEvents(moment().startOf("week"), moment().endOf("week"))
+  Actions.fetchEvents(moment().startOf("week"), moment().endOf("week"))
 );
 
 const renderApp = () => {
-	render(
-		<Provider store={store}>
-			<App />
-		</Provider>,
-		document.getElementById("root")
-	);
+  ReactDOM.render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById("root")
+  );
 };
 
 const root = document.createElement("div");
@@ -41,5 +42,5 @@ document.body.appendChild(root);
 renderApp();
 
 if (module.hot) {
-	module.hot.accept("./App", renderApp);
+  module.hot.accept("./App", renderApp);
 }
