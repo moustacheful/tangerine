@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Tangerine
 // @namespace    http://acidlabs.io/
-// @version      0.3
+// @version      0.4
 // @description  Hijacks our beloved tracking platform to make it useable-ish.
 // @author       Daniel Acuña
 // @updateURL    https://moustacheful.github.io/tangerine/userscript.js
@@ -14,9 +14,11 @@
     "use strict";
     var manifest, script, link;
     manifest = document.createElement("script");
+    manifest.async = false;
     manifest.src = "https://moustacheful.github.io/tangerine/dist/manifest.js";
 
     script = document.createElement("script");
+    script.async = false;
     script.src = "https://moustacheful.github.io/tangerine/dist/main.js";
 
     link = document.createElement("link");
