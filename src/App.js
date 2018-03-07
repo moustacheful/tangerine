@@ -42,6 +42,7 @@ class App extends Component {
                       updateEvent={this.props.updateEvent}
                       createNewEvent={this.props.createNewEvent}
                       setSelectedEventId={this.props.setSelectedEventId}
+                      currentEvent={this.props.log.selectedEvent}
                     />
                   </div>
                   <DailyTotals totals={this.props.log.totals} />
@@ -62,7 +63,13 @@ class App extends Component {
                   </aside>
                 : <aside>
                     <div className="well well-xs">
-                      Seleccionar un rango para trackear
+                      Seleccionar un rango para trackear. <br />
+                      <code>ctrl + arrastrar</code>
+                      {" "}
+                      copiar / continuar tarea
+                      {" "}
+                      <br />
+
                     </div>
                   </aside>}
             </div>

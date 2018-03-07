@@ -58,7 +58,8 @@ export default function(state = defaultState, action) {
         activity: Storage.get("defaultActivity") || "",
         relatedURL: "",
         billable: false,
-        ...action.value
+        ...action.value,
+        _hasChanged: true
       };
 
       if (existingEvent > -1) {
@@ -87,7 +88,7 @@ export default function(state = defaultState, action) {
 
       if (eventIndex === -1) {
         console.log(action.eventId, "not found");
-        return;
+        return state;
       }
 
       const events = [...state.events];
@@ -180,7 +181,7 @@ export const Actions = {
     return dispatch => {
       dispatch({
         type: CREATE_NEW_EVENT,
-        value: _.pick(options, ["start", "end"])
+        value: options
       });
       dispatch({
         type: SET_SELECTED_EVENT_ID,

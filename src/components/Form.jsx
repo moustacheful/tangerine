@@ -306,7 +306,7 @@ class Form extends Component {
         </a>
         {this.state.showDebug &&
           <pre>
-            {JSON.stringify(this.state, null, "  ")}
+            {JSON.stringify(this.state.event, null, "  ")}
           </pre>}
       </form>
     );
