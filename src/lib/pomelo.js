@@ -25,14 +25,12 @@ const Pomelo = {
 	},
 
 	getProjects() {
-		const result = Array.from(document.querySelectorAll("#project_id option"))
+		return Array.from(document.querySelectorAll("#project_id option"))
 			.filter(option => !!option.value)
 			.map(option => ({
 				value: option.value,
 				label: option.textContent
 			}));
-
-		return Promise.resolve(result);
 	},
 
 	extractLogData(from, to, page = 1) {

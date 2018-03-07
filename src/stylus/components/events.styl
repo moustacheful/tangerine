@@ -1,0 +1,48 @@
+
+.rbc-event
+  border-radius 0
+
+for $color, $i in $colors
+  .rbc-event.event-color-{$i}
+    background $color
+    border 1px solid darken($color, 10%)
+    transition all .3s ease
+
+    if light($color)
+      color lightness($color, 20%)
+    else
+      color lightness($color, 90%)
+
+    &:hover,
+    &.event-selected
+      background darken($color, 10%)
+      border 1px solid darken($color, 20%)
+
+    &.event-modified
+      background lighten($color, 60%)
+      border 1px dashed darken($color, 30%)
+
+.rbc-event.event-selected
+  box-shadow 0px 10px 10px 1px alpha(black, 20%)
+  z-index 100
+
+.rbc-event.event-modified:after
+  font-family 'FontAwesome'
+  content '\f071 '
+  position absolute
+  bottom -3px
+  left 5px
+  font-size 12px
+
+.rbc-time-slot
+  min-height: 32px
+
+.rbc-event-content
+  font-size: 11px
+
+.rbc-event:hover .rbc-event-label
+  display: block
+
+.rbc-event-label
+  font-size: 10px
+

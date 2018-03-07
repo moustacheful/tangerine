@@ -1,6 +1,6 @@
 import _ from "lodash";
 import Select from "react-select";
-import React from "react";
+import { h, Component } from "preact";
 import autobind from "autobind-decorator";
 import moment from "moment";
 
@@ -9,7 +9,7 @@ import Pomelo from "../lib/pomelo";
 import Storage from "../lib/storage";
 import { getNodeFromString } from "../lib/util";
 
-class EnhancedSelect extends React.Component {
+class EnhancedSelect extends Component {
   render() {
     const { name, onChange, ...props } = this.props;
 
@@ -27,7 +27,7 @@ class EnhancedSelect extends React.Component {
   }
 }
 
-class Form extends React.Component {
+class Form extends Component {
   state = {
     showDebug: false,
     tasks: [],
@@ -208,7 +208,7 @@ class Form extends React.Component {
             className="form-control"
             placeholder="Título"
             name="title"
-            onChange={this.onInputChange}
+            onInput={this.onInputChange}
             value={this.state.event.title}
           />
         </div>
@@ -221,7 +221,7 @@ class Form extends React.Component {
             type="text"
             placeholder="Comentario"
             name="description"
-            onChange={this.onInputChange}
+            onInput={this.onInputChange}
             value={this.state.event.description}
           />
         </div>
@@ -234,7 +234,7 @@ class Form extends React.Component {
             type="text"
             placeholder="URL Ticket"
             name="relatedURL"
-            onChange={this.onInputChange}
+            onInput={this.onInputChange}
             value={this.state.event.relatedURL}
           />
         </div>
@@ -306,7 +306,7 @@ class Form extends React.Component {
         </a>
         {this.state.showDebug &&
           <pre>
-            {JSON.stringify(this.state, null, "  ")}
+            {JSON.stringify(this.state.event, null, "  ")}
           </pre>}
       </form>
     );

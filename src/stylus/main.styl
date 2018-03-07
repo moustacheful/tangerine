@@ -1,0 +1,126 @@
+@require 'variables'
+@require 'animations'
+@require 'components/*'
+
+#tangerine
+  position fixed
+  top 41px
+  left 0
+  width 100%
+
+  .daily-totals
+    border-top 2px solid #ddd
+    border-bottom 1px solid #ddd
+
+    div
+      padding 5px
+      border-right 1px solid #ddd
+      text-align center
+
+      &:first-child
+        padding: 5px 0px
+        width 45px
+        border-left 1px solid #ddd
+        font-weight bold
+
+
+  .pane
+    background white
+    padding 20px 20px
+    animation slide-down 0.3s ease both
+    height calc(100vh - 80px)
+
+
+  aside
+    box-sizing border-box
+    width 350px
+    padding 20px
+    padding-top 40px
+    text-align left
+
+
+  .form-group
+    .Select
+      margin-bottom 10px
+      input
+        height auto
+
+    label a
+      float right
+      font-size 10px
+
+
+  input.form-control,
+  textarea.form-control
+    width 100%
+    box-sizing border-box
+    padding 15px 10px
+
+
+  select.form-control
+    width 100%
+    box-sizing border-box
+
+
+  textarea.form-control
+    padding 10px
+    height 150px
+
+
+  .btn-toggle
+    position absolute
+    display block
+    top 0px
+    right 0px
+    z-index 100
+
+
+  .tools
+    margin 10px 0
+
+
+  .tools > *
+    margin-right 10px
+
+
+  .loading-screen
+    background rgba(255, 255, 255, 0.6)
+    position absolute
+    display flex
+    top 0
+    left 0
+    width 100%
+    height 100%
+    z-index 1000
+    align-items center
+    justify-content center
+    animation fadeIn .25s ease both
+
+    &:after
+      font-family 'FontAwesome'
+      content '\f013'
+      animation spin 2s linear infinite
+      display block
+      font-size 30px
+      width 30px
+      height 30px
+      line-height 36px
+      text-align center
+
+.full-height
+  height 100%
+
+.flex-parent
+  display flex
+
+  &.flex-column
+    flex-direction column
+
+.flex-extend
+  flex 1
+
+.calendar-container
+  display flex
+  > *
+    width 100%
+    height 100%

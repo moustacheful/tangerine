@@ -12,6 +12,6 @@
     "use strict";
     var script;
     script = document.createElement("script");
-    script.src = "https://localhost:5000/static/js/bundle.js";
+    script.src = "https://localhost:5000/app.js";
     document.body.appendChild(script);
 })();
