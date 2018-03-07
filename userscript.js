@@ -4,6 +4,8 @@
 // @version      0.2
 // @description  Hijacks our beloved tracking platform to make it useable-ish.
 // @author       Daniel Acuña
+// @updateURL    https://moustacheful.github.io/tangerine/userscript.js
+// @downloadURL  https://moustacheful.github.io/tangerine/userscript.js
 // @match        *://pomelo.acid.cl/daily_tasks*
 // @grant        none
 // ==/UserScript==
