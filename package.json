@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "nwb build-preact-app --no-vendor && npm run build-clean",
-    "build-clean": "rm dist/*.map && rm dist/index.html && rm dist/manifest* && mv dist/app*.js dist/main.js && mv dist/app*.css dist/main.css", 
+    "build-clean": "rm dist/*.map && rm dist/index.html && mv dist/manifest*.js dist/manifest.js && mv dist/app*.js dist/main.js && mv dist/app*.css dist/main.css",
     "clean": "nwb clean-app",
     "start": "nwb serve-preact-app --port 5000",
     "test": "nwb test-preact",
