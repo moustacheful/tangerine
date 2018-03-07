@@ -1,6 +1,6 @@
 import _ from "lodash";
 import Select from "react-select";
-import { h, Component } from "preact";
+import React, { Component } from "react";
 import autobind from "autobind-decorator";
 import moment from "moment";
 

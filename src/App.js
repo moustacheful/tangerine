@@ -1,5 +1,5 @@
 import autobind from "autobind-decorator";
-import { h, Component } from "preact";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 
