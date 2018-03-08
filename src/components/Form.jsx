@@ -98,6 +98,7 @@ class Form extends Component {
       showDebug: !this.state.showDebug
     });
   }
+
   mapEventToForm() {
     const { event } = this.state;
 
@@ -293,10 +294,18 @@ class Form extends Component {
               Enviar
             </button>}
           {this.state.event.id !== "new" && [
-            <button onClick={this.saveEvent} className="btn btn-warning">
+            <button
+              key="btn-update"
+              onClick={this.saveEvent}
+              className="btn btn-warning"
+            >
               Actualizar
             </button>,
-            <button onClick={this.delete} className="btn btn-danger">
+            <button
+              key="btn-delete"
+              onClick={this.delete}
+              className="btn btn-danger"
+            >
               Borrar
             </button>
           ]}

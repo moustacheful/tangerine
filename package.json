@@ -4,8 +4,8 @@
   "description": "Tangerine",
   "private": true,
   "scripts": {
-    "build": "nwb build-react-app --no-vendor",
-    "build-clean": "rm dist/*.map && rm dist/index.html && mv && mv dist/app*.css dist/main.css && cat dist/manifest*.js dist/app*.js > app.js",
+    "build": "nwb build-react-app --no-vendor && npm run build-clean",
+    "build-clean": "rm dist/*.map && rm dist/index.html && mv dist/app*.css dist/main.css && mv dist/app*.js dist/main.js && mv dist/manifest*.js dist/manifest.js",
     "clean": "nwb clean-app",
     "start": "nwb serve-react-app --port 5000",
     "test": "nwb test-react",
