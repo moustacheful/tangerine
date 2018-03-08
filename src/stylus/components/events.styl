@@ -6,7 +6,7 @@ for $color, $i in $colors
   .rbc-event.event-color-{$i}
     background $color
     border 1px solid darken($color, 10%)
-    transition all .3s ease
+    transition height .3s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease, color .3s ease
 
     if light($color)
       color lightness($color, 20%)
