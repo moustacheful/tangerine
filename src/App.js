@@ -42,6 +42,7 @@ class App extends Component {
                       updateEvent={this.props.updateEvent}
                       createNewEvent={this.props.createNewEvent}
                       setSelectedEventId={this.props.setSelectedEventId}
+                      selectedEventId={this.props.log.selectedEventId}
                       currentEvent={this.props.log.selectedEvent}
                     />
                   </div>
