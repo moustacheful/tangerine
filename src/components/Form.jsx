@@ -99,8 +99,7 @@ class LogForm extends Component {
 
       if (!value) return false;
 
-      if (k === "activity")
-        return this.state.tasks.map(o => o.value).includes(value);
+      if (k === "activity") return this.isActivityValid();
 
       return true;
     });
@@ -259,6 +258,7 @@ class LogForm extends Component {
           <label htmlFor="t_event-project">
             Proyecto{" "}
             {this.state.event.project &&
+              this.state.event.project !== Storage.get("defaultProject") &&
               <a
                 onClick={() =>
                   Storage.set("defaultProject", this.state.event.project)}
@@ -277,31 +277,32 @@ class LogForm extends Component {
             options={this.props.projects}
           />
         </div>
-        {!!this.state.tasks.length &&
-          <div className="form-group">
-            <label htmlFor="t_event-activity">
-              Tipo de tarea{" "}
-              {this.state.event.activity &&
-                this.isActivityValid() &&
-                <a
-                  onClick={() =>
-                    Storage.set("defaultActivity", this.state.event.activity)}
-                  href="#"
-                >
-                  Guardar como predeterminado
-                </a>}
-            </label>
-            <EnhancedSelect
-              id="t_event-activity"
-              className="form-control"
-              name="activity"
-              value={this.state.event.activity}
-              clearable={false}
-              onChange={this.onInputChange}
-              options={this.state.tasks}
-              isLoading={this.state.loadingTasks}
-            />
-          </div>}
+
+        <div className="form-group">
+          <label htmlFor="t_event-activity">
+            Tipo de tarea{" "}
+            {this.state.event.activity &&
+              this.isActivityValid() &&
+              this.state.event.activity !== Storage.get("defaultActivity") &&
+              <a
+                onClick={() =>
+                  Storage.set("defaultActivity", this.state.event.activity)}
+                href="#"
+              >
+                Guardar como predeterminado
+              </a>}
+          </label>
+          <EnhancedSelect
+            id="t_event-activity"
+            className="form-control"
+            name="activity"
+            value={this.state.event.activity}
+            clearable={false}
+            onChange={this.onInputChange}
+            options={this.state.tasks}
+            isLoading={this.state.loadingTasks}
+          />
+        </div>
 
         <div className="tools">
           {this.state.event.id === "new" &&
