@@ -27,15 +27,13 @@ class EnhancedSelect extends Component {
   }
 }
 
-class Form extends Component {
+class LogForm extends Component {
   state = {
     showDebug: false,
     tasks: [],
     loadingTasks: false,
     timeMap: {},
-    formData: {},
-    event: {},
-    activityId: undefined
+    event: {}
   };
 
   componentWillMount() {
@@ -91,6 +89,23 @@ class Form extends Component {
         }
       });
     }
+  }
+
+  isValid() {
+    const required = ["title", "project", "activity"];
+
+    const results = required.map(k => {
+      const value = this.state.event[k];
+
+      if (!value) return false;
+
+      if (k === "activity")
+        return this.state.tasks.map(o => o.value).includes(value);
+
+      return true;
+    });
+
+    return results.some(i => !i) ? false : true;
   }
 
   toggleDebug() {
@@ -290,25 +305,28 @@ class Form extends Component {
 
         <div className="tools">
           {this.state.event.id === "new" &&
-            <button className="btn btn-primary" type="submit">
+            <button
+              key="new-btn-create"
+              className="btn btn-primary"
+              type="submit"
+              disabled={!this.isValid()}
+            >
               Enviar
             </button>}
-          {this.state.event.id !== "new" && [
+
+          {this.state.event.id !== "new" &&
             <button
               key="btn-update"
               onClick={this.saveEvent}
               className="btn btn-warning"
+              disabled={!this.isValid()}
             >
               Actualizar
-            </button>,
-            <button
-              key="btn-delete"
-              onClick={this.delete}
-              className="btn btn-danger"
-            >
-              Borrar
-            </button>
-          ]}
+            </button>}
+
+          <button onClick={this.delete} className="btn btn-danger">
+            Borrar
+          </button>
         </div>
         <a href="#" onClick={this.toggleDebug}>
           Ver info debug
@@ -322,4 +340,4 @@ class Form extends Component {
   }
 }
 
-export default autobind(Form);
+export default autobind(LogForm);

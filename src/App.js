@@ -65,7 +65,7 @@ class App extends Component {
                 : <aside>
                     <div className="well well-xs">
                       Seleccionar un rango para trackear. <br />
-                      <code>ctrl + arrastrar</code>
+                      <code>ctrl/command + arrastrar</code>
                       {" "}
                       copiar / continuar tarea
                       {" "}
