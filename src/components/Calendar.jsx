@@ -17,7 +17,38 @@ const DndBigCalendar = withDragAndDrop(BigCalendar);
 const messages = {
   next: "Siguiente",
   previous: "Anterior",
-  today: "Hoy",
+  today: "Semana actual"
+};
+
+const formats = {
+  dayRangeHeaderFormat: ({ start, end }, _, localizer) => {
+    const startM = start.getMonth();
+    const endM = end.getMonth();
+
+    const result = [
+      localizer.format(start, "DD"),
+      "-",
+      localizer.format(end, "DD"),
+      "de",
+      localizer.format(end, "MMMM")
+    ];
+
+    if (startM !== endM) {
+      result.splice(1, 0, "de", localizer.format(start, "MMMM"));
+    }
+
+    return result.join(" ");
+  },
+
+  eventTimeRangeFormat({ start, end }, culture, localizer) {
+    const optionalMinutes = t => {
+      const f = t.getMinutes() ? "H:mm" : "H";
+      return localizer.format(t, f);
+    };
+
+    const res = [optionalMinutes(start), optionalMinutes(end)];
+    return res.join(" - ");
+  }
 };
 
 class Calendar extends Component {
@@ -39,11 +70,10 @@ class Calendar extends Component {
   }
 
   onModifierChange(evt) {
-    if (evt.keyCode !== 17) return;
-
+    if (![224, 17].includes(evt.keyCode)) return;
     // We only need ctrl for now
     this.setState({
-      ctrlModifier: evt.type === "keydown" ? true : false,
+      ctrlModifier: evt.type === "keydown" ? true : false
     });
   }
 
@@ -58,7 +88,7 @@ class Calendar extends Component {
 
     this.colorMap = {
       ...this.colorMap,
-      [key]: nextIndex,
+      [key]: nextIndex
     };
 
     return nextIndex;
@@ -72,23 +102,22 @@ class Calendar extends Component {
         .reduce((acc, projectKey, i) => {
           acc[projectKey] = i;
           return acc;
-        }, {}),
+        }, {})
     });
   }
 
   eventPropGetter(event) {
     const isNew = event.id === "new";
     const colorClassId = this.getColorClass(event.project);
-    const isSelected =
-      this.props.currentEvent && this.props.currentEvent.id === event.id;
+    const isSelected = this.props.selectedEventId === event.id;
 
     return {
       className: classify({
         "event-is-new": isNew,
         "event-modified": event._hasChanged,
         "event-selected": isSelected,
-        ["event-color-" + colorClassId]: true,
-      }),
+        ["event-color-" + colorClassId]: true
+      })
     };
   }
 
@@ -132,17 +161,7 @@ class Calendar extends Component {
         drilldownView={null}
         eventPropGetter={this.eventPropGetter}
         messages={messages}
-        formats={{
-          eventTimeRangeFormat({ start, end }, culture, localizer) {
-            const optionalMinutes = t => {
-              const f = t.getMinutes() ? "H:mm" : "H";
-              return localizer.format(t, f);
-            };
-
-            const res = [optionalMinutes(start), optionalMinutes(end)];
-            return res.join(" - ");
-          },
-        }}
+        formats={formats}
       />
     );
   }

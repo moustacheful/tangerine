@@ -134,7 +134,10 @@ export const Actions = {
 
   deleteEvent(eventId) {
     return dispatch => {
-      if (eventId === "new") return;
+      if (eventId === "new") {
+        dispatch({ type: DELETE_EVENT, eventId });
+        return;
+      }
 
       dispatch({ type: IS_LOADING, value: true });
       http({
