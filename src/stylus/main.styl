@@ -7,74 +7,244 @@
   top 41px
   left 0
   width 100%
-
+  font-family: 'Roboto', sans-serif;
+  a 
+    color #00A00F
+    &:focus,
+    &:active
+      outline 0
   .daily-totals
-    border-top 2px solid #ddd
-    border-bottom 1px solid #ddd
+    // border-top 2px solid #ddd
+    border-radius 0 0 8px 8px
+    border 0
+    background #ddd
+    font-family 'montserrat'
+    font-weight bold
+    color #212121
 
     div
       padding 5px
-      border-right 1px solid #ddd
       text-align center
 
       &:first-child
         padding: 5px 0px
         width 45px
-        border-left 1px solid #ddd
         font-weight bold
-
+        tex-transform uppercase
 
   .pane
-    background white
+    background #F2F2F2
     padding 20px 20px
     animation slide-down 0.3s ease both
     height calc(100vh - 80px)
 
+  .rbc-time-view
+    background #efefef
+    border 0
+    border-radius 6px
 
+  .rbc-row
+    background #ddd
+    border-radius 6px 6px 0 0
+
+  .rbc-header
+    text-transform capitalize
+    border-radius 150px
+    margin 0 15px
+
+  .rbc-header.rbc-today
+      // background #00D816
+      background #212121
+      color #03D817
+      z-index 100
+
+  .rbc-toolbar
+    margin 15px 0 20px 0
+  .rbc-toolbar-label
+    font-weight 800
+    text-transform capitalize
+    font-size 32px
+    text-align left
+    color #212121 
   aside
     box-sizing border-box
     width 350px
     padding 20px
-    padding-top 40px
+    padding-top 62px
     text-align left
 
+  .rbc-time-header > .rbc-row:first-child
+    border-bottom 0
 
+  .rbc-time-header.rbc-overflowing
+    border-right 0
+    
   .form-group
     .Select
       margin-bottom 10px
       input
         height auto
+    label
+      font-family 'Montserrat'
+      text-transform uppercase
+      font-size 10px
+      font-weight bold
+      color #212121
 
     label a
       float right
       font-size 10px
 
+  .tools
+    .btn-primary,
+    .btn-warning,
+    .btn-danger
+      font-family 'Montserrat'
+      text-transform uppercase
+      width 80%
+      background #212121
+      padding 15px
+      text-shadow none
+      color white
+      letter-spacing 2px
+      font-size 12px
+      border none
+      border-radius 150px
+      margin 0 auto
+      display block
+      font-weight 700
+      &:hover
+        opacity 0.8
+      &:focus
+        outline 0
+        box-shadow none
+    .btn-warning
+      background #faa732
+      color #212121
+    .btn-danger
+      background transparent
+      border 3px solid #bd362f
+      color #bd362f
+      margin-top 10px
+
 
   input.form-control,
-  textarea.form-control
+  textarea.form-control,
+  .Select-control
     width 100%
+    font-family: 'Roboto', sans-serif;
+    font-weight 500
+    color #212121
+    letter-spacing 0.05em
+    text-transform capitalize 
     box-sizing border-box
-    padding 15px 10px
-
+    background transparent
+    margin-bottom 25px
+    padding 25px
+    box-shadow none 
+    border: 2px solid #E5E5E5
+    &:hover
+      border-color #CECECE
+    &:focus,
+    &:active
+      border: 2px solid #212121
+  
+  .Select-control
+    width 100%
+    font-family: 'Roboto', sans-serif;
+    font-weight 500
+    color #212121
+    letter-spacing 0.05em
+    text-transform capitalize 
+    box-sizing border-box
+    background transparent
+    box-shadow none 
+    padding 8px
+    border: 2px solid #E5E5E5
+    &:hover
+      border-color #CECECE
+    &:focus,
+    &:active
+      border: 2px solid #212121
+    .Select-value
+      line-height 50px
 
   select.form-control
     width 100%
     box-sizing border-box
+  
+  .rbc-day-slot.rbc-time-column
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    &:hover
+      background #f6f6f6
+  .rbc-time-slot
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+    &:hover
+      background white
 
-
+  .rbc-event.event-selected
+    box-shadow: 0px 25px 45px 1px rgba(0,0,0,0.2);
+  
+  .rbc-event-label
+    font-weight lighter
+    
   textarea.form-control
-    padding 10px
+    padding 10px 25px
     height 150px
-
+    
+  .rbc-btn-group
+    button
+      color: #373a3c;
+      display: inline-block;
+      margin-right 8px
+      text-align: center;
+      vertical-align: middle;
+      background: none;
+      background-image: none;
+      border: 3px solid #ccc;
+      padding: .375rem 1rem;
+      border-radius: 150px;
+      -webkit-transition: all 1s;
+      transition: all 1s;
+      color #212121
+      font-weight bold
+      letter-spacing 2px
+      font-size 10px
+      &:focus,
+      &:hover
+        outline 0
+        box-shadow none
+        border 3px solid #212121
 
   .btn-toggle
     position absolute
     display block
-    top 0px
-    right 0px
+    top 10px
+    right 10px
     z-index 100
+    background transparent
+    box-shadow none
+    border 3px solid #ddd
+    border-radius 150px
+    padding 10px 35px
+    color #006dcc
+    text-shadow none
+    font-weight bold
+    font-size 12px
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    &:hover,
+    &:focus,
+      border 3px solid #006dcc
+      outline 0
+      
 
-
+  .well
+    border none
+    box-shadow none
+    background #ddd
   .tools
     margin 10px 0
 
@@ -82,7 +252,8 @@
   .tools > *
     margin-right 10px
 
-
+  .rbc-calendar
+    font-weight bold
   .loading-screen
     background rgba(255, 255, 255, 0.6)
     position absolute
@@ -106,6 +277,10 @@
       height 30px
       line-height 36px
       text-align center
+
+  .rbc-event
+    border-radius: 4px;
+    margin: 5px;
 
 .full-height
   height 100%
