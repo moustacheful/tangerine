@@ -27,15 +27,13 @@ class EnhancedSelect extends Component {
   }
 }
 
-class Form extends Component {
+class LogForm extends Component {
   state = {
     showDebug: false,
     tasks: [],
     loadingTasks: false,
     timeMap: {},
-    formData: {},
-    event: {},
-    activityId: undefined
+    event: {}
   };
 
   componentWillMount() {
@@ -91,6 +89,22 @@ class Form extends Component {
         }
       });
     }
+  }
+
+  isValid() {
+    const required = ["title", "project", "activity"];
+
+    const results = required.map(k => {
+      const value = this.state.event[k];
+
+      if (!value) return false;
+
+      if (k === "activity") return this.isActivityValid();
+
+      return true;
+    });
+
+    return results.some(i => !i) ? false : true;
   }
 
   toggleDebug() {
@@ -244,6 +258,7 @@ class Form extends Component {
           <label htmlFor="t_event-project">
             Proyecto{" "}
             {this.state.event.project &&
+              this.state.event.project !== Storage.get("defaultProject") &&
               <a
                 onClick={() =>
                   Storage.set("defaultProject", this.state.event.project)}
@@ -262,53 +277,57 @@ class Form extends Component {
             options={this.props.projects}
           />
         </div>
-        {!!this.state.tasks.length &&
-          <div className="form-group">
-            <label htmlFor="t_event-activity">
-              Tipo de tarea{" "}
-              {this.state.event.activity &&
-                this.isActivityValid() &&
-                <a
-                  onClick={() =>
-                    Storage.set("defaultActivity", this.state.event.activity)}
-                  href="#"
-                >
-                  Guardar como predeterminado
-                </a>}
-            </label>
-            <EnhancedSelect
-              id="t_event-activity"
-              className="form-control"
-              name="activity"
-              value={this.state.event.activity}
-              clearable={false}
-              onChange={this.onInputChange}
-              options={this.state.tasks}
-              isLoading={this.state.loadingTasks}
-            />
-          </div>}
+
+        <div className="form-group">
+          <label htmlFor="t_event-activity">
+            Tipo de tarea{" "}
+            {this.state.event.activity &&
+              this.isActivityValid() &&
+              this.state.event.activity !== Storage.get("defaultActivity") &&
+              <a
+                onClick={() =>
+                  Storage.set("defaultActivity", this.state.event.activity)}
+                href="#"
+              >
+                Guardar como predeterminado
+              </a>}
+          </label>
+          <EnhancedSelect
+            id="t_event-activity"
+            className="form-control"
+            name="activity"
+            value={this.state.event.activity}
+            clearable={false}
+            onChange={this.onInputChange}
+            options={this.state.tasks}
+            isLoading={this.state.loadingTasks}
+          />
+        </div>
 
         <div className="tools">
           {this.state.event.id === "new" &&
-            <button className="btn btn-primary" type="submit">
+            <button
+              key="new-btn-create"
+              className="btn btn-primary"
+              type="submit"
+              disabled={!this.isValid()}
+            >
               Enviar
             </button>}
-          {this.state.event.id !== "new" && [
+
+          {this.state.event.id !== "new" &&
             <button
               key="btn-update"
               onClick={this.saveEvent}
               className="btn btn-warning"
+              disabled={!this.isValid()}
             >
               Actualizar
-            </button>,
-            <button
-              key="btn-delete"
-              onClick={this.delete}
-              className="btn btn-danger"
-            >
-              Borrar
-            </button>
-          ]}
+            </button>}
+
+          <button onClick={this.delete} className="btn btn-danger">
+            Borrar
+          </button>
         </div>
         <a href="#" onClick={this.toggleDebug}>
           Ver info debug
@@ -322,4 +341,4 @@ class Form extends Component {
   }
 }
 
-export default autobind(Form);
+export default autobind(LogForm);
