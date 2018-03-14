@@ -140,7 +140,7 @@
     letter-spacing 0.05em
     text-transform capitalize 
     box-sizing border-box
-    background transparent
+    background #f7f7f7
     margin-bottom 25px
     padding 25px
     box-shadow none 
@@ -150,6 +150,7 @@
     &:focus,
     &:active
       border: 2px solid #212121
+      background white
   
   .Select-control
     width 100%
@@ -163,6 +164,9 @@
     box-shadow none 
     padding 8px
     border: 2px solid #E5E5E5
+    background #f7f7f7
+    -webkit-transition: all 1s;
+    transition: all 1s;
     &:hover
       border-color #CECECE
     &:focus,
@@ -247,6 +251,9 @@
     border none
     box-shadow none
     background #ddd
+  
+  .code
+    padding: 0 15px;
   .tools
     margin 10px 0
 
@@ -282,7 +289,7 @@
 
   .rbc-event
     border-radius: 4px;
-    margin: 5px;
+    margin: 0 5px 5px 5px;
 
 .full-height
   height 100%
