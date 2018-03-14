@@ -2,6 +2,7 @@
 @require 'animations'
 @require 'components/*'
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400')
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700')
 
 #tangerine
   font-family 'Roboto' !important
@@ -9,36 +10,46 @@
   top 41px
   left 0
   width 100%
+  font-family: 'Roboto', sans-serif;
+
+  a
+    color #00A00F
+    &:focus,
+    &:active
+      outline 0
 
   .daily-totals
-    border-top 2px solid #ddd
-    border-bottom 1px solid #ddd
+    border-radius 0 0 8px 8px
+    border 0
+    background #ddd
+    font-family 'montserrat'
+    font-weight bold
+    color #212121
 
     div
       padding 5px
-      border-right 1px solid #ddd
       text-align center
+      border-left 1px solid #bfbfbf
 
       &:first-child
+        border-left none
         padding: 5px 0px
-        border-left 1px solid #ddd
         font-weight bold
-
+        text-transform uppercase
 
   .pane
-    background white
+    background #F2F2F2
     padding 20px 20px
     animation slide-down 0.3s ease both
     height calc(100vh - 80px)
-
 
   aside
     box-sizing border-box
     width 350px
     padding 20px
-    padding-top 40px
+    padding-top 62px
     text-align left
-
+    overflow-y auto
 
   .form-group
     .Select
@@ -46,36 +57,142 @@
       input
         height auto
 
+    label
+      font-family 'Montserrat'
+      text-transform uppercase
+      font-size 10px
+      font-weight bold
+      color #212121
+
     label a
       float right
       font-size 10px
 
+  .tools
+    .btn-primary,
+    .btn-warning,
+    .btn-danger
+      box-sizing border-box
+      font-family 'Montserrat'
+      text-transform uppercase
+      width 80%
+      background #212121
+      text-shadow none
+      color white
+      letter-spacing 2px
+      font-size 12px
+      border none
+      border-radius 150px
+      margin 0 auto
+      display block
+      font-weight 700
+      height 50px
+      &:hover, &:focus
+        opacity 0.8
+        outline 0
+      &:disabled
+        opacity 0.3
+
+
+    .btn-warning
+      background #faa732
+      color #212121
+
+
+    .btn-danger
+      background transparent
+      border 3px solid #bd362f
+      color #bd362f
+      margin-top 10px
+
 
   input.form-control,
-  textarea.form-control
+  textarea.form-control,
+  .Select-control
     width 100%
+    font-family: 'Roboto', sans-serif;
+    font-weight 500
+    color #212121
+    letter-spacing 0.05em
     box-sizing border-box
-    padding 15px 10px
+    background #f7f7f7
+    margin-bottom 25px
+    padding 25px 15px
+    box-shadow none
+    border: 2px solid #E5E5E5
+    &:hover
+      border-color #CECECE
+    &:focus,
+    &:active
+      border: 2px solid #212121
+      background white
 
+  .Select-control
+    width 100%
+    font-family: 'Roboto', sans-serif;
+    font-weight 500
+    color #212121
+    letter-spacing 0.05em
+    box-sizing border-box
+    background transparent
+    box-shadow none
+    padding 8px
+    border: 2px solid #E5E5E5
+    background #f7f7f7
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    &:hover
+      border-color #CECECE
+    &:focus,
+    &:active
+      border: 2px solid #212121
+    .Select-value
+      padding-left 15px
+      line-height 50px
+
+    .Select-placeholder
+      padding-top 8px
+      padding-left 15px
 
   select.form-control
     width 100%
     box-sizing border-box
 
 
-  textarea.form-control
-    padding 10px
-    height 150px
 
+  textarea.form-control
+    padding 15px
+    height 80px
 
   .btn-toggle
     position absolute
     display block
-    top 0px
-    right 0px
+    top 10px
+    right 10px
     z-index 100
+    background transparent
+    box-shadow none
+    border 3px solid #ddd
+    border-radius 150px
+    padding 10px 35px
+    color #006dcc
+    text-shadow none
+    font-weight bold
+    font-size 12px
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    &:hover,
+    &:focus,
+      border 3px solid #006dcc
+      outline 0
 
+  .well
+    border none
+    box-shadow none
+    background #ddd
 
+  .code
+    padding: 0 15px;
   .tools
     margin 10px 0
 
@@ -83,7 +200,8 @@
   .tools > *
     margin-right 10px
 
-
+  .rbc-calendar
+    font-weight bold
   .loading-screen
     background rgba(255, 255, 255, 0.6)
     position absolute
@@ -107,6 +225,10 @@
       height 30px
       line-height 36px
       text-align center
+
+  .rbc-event
+    border-radius: 4px;
+    margin: 0 5px 5px 5px;
 
 .full-height
   height 100%

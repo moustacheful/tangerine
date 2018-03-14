@@ -1,18 +1,94 @@
-.rbc-row:nth-child(2)
-  display: none
+#tangerine
+  .rbc-row:nth-child(2)
+    display: none
 
-.rbc-day-slot .rbc-time-slot
-  border-color: #efefef
+  .rbc-day-slot .rbc-time-slot
+    border-color: #efefef
 
-.rbc-today
-  background #fafafa
+  .rbc-today
+    background #fafafa
 
-.rbc-header
-  padding 5px
+  .rbc-header
+    padding 5px
+    border-left 1px solid #bfbfbf
 
-.rbc-time-gutter
-  text-align right
+  .rbc-time-gutter
+    text-align right
 
-.rbc-header-gutter, .rbc-time-gutter:first-of-type, .daily-totals div:first-child
-  width 80px
+  .rbc-header-gutter, .rbc-time-gutter:first-of-type, .daily-totals div:first-child
+    width 80px
 
+  .rbc-time-view
+    background #f5f5f5
+    border 0
+    border-radius 6px
+
+  .rbc-row
+    background #ddd
+    border-radius 6px 6px 0 0
+
+  .rbc-header
+    text-transform uppercase
+
+  .rbc-header.rbc-today
+      background #333
+      color #03D817
+      z-index 100
+
+  .rbc-toolbar
+    margin 15px 0 20px 0
+    flex-direction: row-reverse;
+
+  .rbc-toolbar-label
+    font-weight 800
+    text-transform capitalize
+    font-size 24px
+    text-transform uppercase
+    text-align left
+    font-family 'Montserrat'
+    color #212121
+
+  .rbc-time-header > .rbc-row:first-child
+    border-bottom 0
+
+  .rbc-time-header.rbc-overflowing
+    border-right 0
+
+  .rbc-day-slot.rbc-time-column
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    &:hover
+      background #f6f6f6
+
+  .rbc-time-slot
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+    &:hover
+      background white
+
+  .rbc-event-label
+    font-weight lighter
+
+  .rbc-btn-group
+    button
+      color: #373a3c;
+      display: inline-block;
+      margin-right 8px
+      text-align: center;
+      vertical-align: middle;
+      background: none;
+      background-image: none;
+      border: 3px solid #ccc;
+      padding: .375rem 1rem;
+      border-radius: 150px;
+      -webkit-transition: all 1s;
+      transition: all 1s;
+      color #212121
+      font-weight bold
+      letter-spacing 2px
+      font-size 10px
+      &:focus,
+      &:hover
+        outline 0
+        box-shadow none
+        border 3px solid #212121
