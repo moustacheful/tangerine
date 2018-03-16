@@ -17,7 +17,7 @@ const DndBigCalendar = withDragAndDrop(BigCalendar);
 const messages = {
   next: "Siguiente",
   previous: "Anterior",
-  today: "Semana actual"
+  today: "Semana actual",
 };
 
 const formats = {
@@ -30,7 +30,7 @@ const formats = {
       "-",
       localizer.format(end, "DD"),
       "de",
-      localizer.format(end, "MMMM")
+      localizer.format(end, "MMMM"),
     ];
 
     if (startM !== endM) {
@@ -48,7 +48,7 @@ const formats = {
 
     const res = [optionalMinutes(start), optionalMinutes(end)];
     return res.join(" - ");
-  }
+  },
 };
 
 class Calendar extends Component {
@@ -73,7 +73,7 @@ class Calendar extends Component {
     if (![224, 17].includes(evt.keyCode)) return;
     // We only need ctrl for now
     this.setState({
-      ctrlModifier: evt.type === "keydown" ? true : false
+      ctrlModifier: evt.type === "keydown" ? true : false,
     });
   }
 
@@ -88,7 +88,7 @@ class Calendar extends Component {
 
     this.colorMap = {
       ...this.colorMap,
-      [key]: nextIndex
+      [key]: nextIndex,
     };
 
     return nextIndex;
@@ -102,8 +102,15 @@ class Calendar extends Component {
         .reduce((acc, projectKey, i) => {
           acc[projectKey] = i;
           return acc;
-        }, {})
+        }, {}),
     });
+  }
+
+  withinSameDay(start, end) {
+    const startDay = moment(start).day();
+    const endDay = moment(end).day();
+
+    return startDay === endDay;
   }
 
   eventPropGetter(event) {
@@ -116,12 +123,14 @@ class Calendar extends Component {
         "event-is-new": isNew,
         "event-modified": event._hasChanged,
         "event-selected": isSelected,
-        ["event-color-" + colorClassId]: true
-      })
+        ["event-color-" + colorClassId]: true,
+      }),
     };
   }
 
   onEventDrop({ start, end, event }) {
+    if (!this.withinSameDay(start, end)) return;
+
     if (this.state.ctrlModifier) {
       const eventCopy = { ...event, start, end };
       delete eventCopy.id;
@@ -135,6 +144,8 @@ class Calendar extends Component {
   }
 
   onEventResize(_, { start, end, event }) {
+    if (!this.withinSameDay(start, end)) return;
+
     this.props.updateEvent(event.id, { start, end });
     this.props.setSelectedEventId(event.id);
   }
