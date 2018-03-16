@@ -1,9 +1,9 @@
 #tangerine
   .rbc-row:nth-child(2)
-    display: none
+    display none
 
   .rbc-day-slot .rbc-time-slot
-    border-color: #efefef
+    border-color #efefef
 
   .rbc-today
     background #fafafa
@@ -15,7 +15,9 @@
   .rbc-time-gutter
     text-align right
 
-  .rbc-header-gutter, .rbc-time-gutter:first-of-type, .daily-totals div:first-child
+  .rbc-header-gutter,
+  .rbc-time-gutter:first-of-type,
+  .daily-totals div:first-child
     width 80px
 
   .rbc-time-view
@@ -37,7 +39,7 @@
 
   .rbc-toolbar
     margin 15px 0 20px 0
-    flex-direction: row-reverse;
+    flex-direction row-reverse
 
   .rbc-toolbar-label
     font-weight 800
@@ -55,35 +57,33 @@
     border-right 0
 
   .rbc-day-slot.rbc-time-column
-    -webkit-transition: all 1s;
-    transition: all 1s;
+    transition all 0.2s
     &:hover
       background #f6f6f6
 
   .rbc-time-slot
-    -webkit-transition: all 0.5s;
-    transition: all 0.5s;
+    transition all 0.2s
     &:hover
       background white
 
   .rbc-btn-group
     button
-      color: #373a3c;
-      display: inline-block;
+      color #373a3c
+      display inline-block
       margin-right 8px
-      text-align: center;
-      vertical-align: middle;
-      background: none;
-      background-image: none;
-      border: 3px solid #ccc;
-      padding 3px 10px
-      border-radius: 150px;
-      -webkit-transition: all 1s;
-      transition: all 1s;
+      text-align center
+      vertical-align middle
+      background none
+      background-image none
+      border 3px solid #ccc
+      padding .375rem 1rem
+      border-radius 150px
+      transition all 0.2s
       color #212121
       font-weight bold
       letter-spacing 2px
-      font-size 8px
+      font-size 9px
+
       &:focus,
       &:hover
         outline 0
