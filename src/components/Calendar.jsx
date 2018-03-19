@@ -70,7 +70,7 @@ class Calendar extends Component {
   }
 
   onModifierChange(evt) {
-    if (![224, 17].includes(evt.keyCode)) return;
+    if (![224, 17, 91].includes(evt.keyCode)) return;
     // We only need ctrl for now
     this.setState({
       ctrlModifier: evt.type === "keydown" ? true : false,
