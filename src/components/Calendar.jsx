@@ -144,7 +144,12 @@ class Calendar extends Component {
   }
 
   onEventResize(_, { start, end, event }) {
+    // Bail if same start end, or if not within the same day
+    if (start.valueOf() === end.valueOf()) return;
     if (!this.withinSameDay(start, end)) return;
+
+    // Swap values if start > end to avoid negative values
+    [start, end] = start > end ? [end, start] : [start, end];
 
     this.props.updateEvent(event.id, { start, end });
     this.props.setSelectedEventId(event.id);
