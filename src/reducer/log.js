@@ -162,11 +162,11 @@ export const Actions = {
     };
   },
 
-  fetchEvents(from, to) {
+  fetchEvents(from, to, shouldClear = true) {
     return dispatch => {
       dispatch({ type: IS_LOADING, value: true });
 
-      dispatch({ type: SET_EVENTS, value: [] });
+      if (shouldClear) dispatch({ type: SET_EVENTS, value: [] });
       Pomelo.extractLogData(
         from.format(Pomelo.dateFormat),
         to.format(Pomelo.dateFormat)
@@ -204,13 +204,22 @@ export const Actions = {
       })
         .then(({ data }) => {
           dispatch({ type: DELETE_EVENT, value: "new" });
-          dispatch(Actions.setDate(getState().log.date));
           Toasts.push("Agregado a tu bitácora con éxito", "success");
+
+          const date = getState().log.date;
+
+          dispatch(
+            Actions.fetchEvents(
+              moment(date).startOf("week"),
+              moment(date).endOf("week"),
+              false
+            )
+          );
         })
         .catch(() => {
           Toasts.push("Ocurrió un error guardando en tu bitácora", "danger");
-        })
-        .finally(() => dispatch({ type: IS_LOADING, value: false }));
+          dispatch({ type: IS_LOADING, value: false });
+        });
     };
   },
 
