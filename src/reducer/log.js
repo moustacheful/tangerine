@@ -166,6 +166,7 @@ export const Actions = {
     return dispatch => {
       dispatch({ type: IS_LOADING, value: true });
 
+      dispatch({ type: SET_EVENTS, value: [] });
       Pomelo.extractLogData(
         from.format(Pomelo.dateFormat),
         to.format(Pomelo.dateFormat)

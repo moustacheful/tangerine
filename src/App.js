@@ -7,7 +7,9 @@ import { Actions as LogActions } from "./reducer/log";
 import { Actions as DialogActions } from "./reducer/dialog";
 import {
   selectedEventSelector,
-  getTotalsByDaySelector
+  getTotalsByDaySelector,
+  getDailyAverageSelector,
+  getTotalWeeklyHoursSelector
 } from "./reducer/selectors";
 import Calendar from "./components/Calendar";
 import Form from "./components/Form";
@@ -19,6 +21,11 @@ class App extends Component {
     const collapsedClass = this.props.dialog.collapsed
       ? "is-collapsed"
       : "is-expanded";
+
+    const stats = [
+      { label: "Promedio diario", value: this.props.log.dailyAverage },
+      { label: "Total semanal", value: this.props.log.weeklyTotal }
+    ];
 
     return (
       <div id="tangerine" className={`app ${collapsedClass}`}>
@@ -44,6 +51,7 @@ class App extends Component {
                       setSelectedEventId={this.props.setSelectedEventId}
                       selectedEventId={this.props.log.selectedEventId}
                       currentEvent={this.props.log.selectedEvent}
+                      stats={stats}
                     />
                   </div>
                   <DailyTotals totals={this.props.log.totals} />
@@ -89,7 +97,9 @@ export default connect(
       log: {
         ...state.log,
         selectedEvent: selectedEventSelector(state),
-        totals: getTotalsByDaySelector(state)
+        totals: getTotalsByDaySelector(state),
+        weeklyTotal: getTotalWeeklyHoursSelector(state),
+        dailyAverage: getDailyAverageSelector(state)
       }
     };
   },
