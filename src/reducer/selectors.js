@@ -53,3 +53,21 @@ export const getTotalsByDaySelector = createSelector(
     return _.sortBy(tuples, ([date]) => date).map(([date, value]) => value);
   }
 );
+
+export const getDailyAverageSelector = createSelector(
+  getTotalsByDaySelector,
+  totals => {
+    const workedDays = _.compact(totals);
+
+    const result = workedDays.length
+      ? _.sum(workedDays) / workedDays.length
+      : 0;
+
+    return parseFloat(result.toFixed(2));
+  }
+);
+
+export const getTotalWeeklyHoursSelector = createSelector(
+  getTotalsByDaySelector,
+  totals => parseFloat(_.sum(totals).toFixed(2))
+);
