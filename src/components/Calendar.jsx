@@ -6,8 +6,8 @@ import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
+import CalendarToolbar from "./CalendarToolbar";
 import classify from "../lib/classify";
-
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 // Add localizer
@@ -159,6 +159,10 @@ class Calendar extends Component {
     this.props.setSelectedEventId(event.id);
   }
 
+  getToolbar(props) {
+    return <CalendarToolbar {...props} stats={this.props.stats} />;
+  }
+
   render() {
     return (
       <DndBigCalendar
@@ -178,6 +182,9 @@ class Calendar extends Component {
         eventPropGetter={this.eventPropGetter}
         messages={messages}
         formats={formats}
+        components={{
+          toolbar: this.getToolbar
+        }}
       />
     );
   }
