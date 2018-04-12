@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         Tangerine
 // @namespace    http://acidlabs.io/
-// @version      0.4
+// @version      0.5
 // @description  Hijacks our beloved tracking platform to make it useable-ish.
 // @author       Daniel Acuña
 // @updateURL    https://moustacheful.github.io/tangerine/userscript.js
 // @downloadURL  https://moustacheful.github.io/tangerine/userscript.js
 // @match        *://pomelo.acid.cl/daily_tasks*
+// @match        *://pomelo.acidlabs.io/daily_tasks*
 // @grant        none
 // ==/UserScript==
 
