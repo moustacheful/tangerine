@@ -9,7 +9,7 @@ import {
   selectedEventSelector,
   getTotalsByDaySelector,
   getDailyAverageSelector,
-  getTotalWeeklyHoursSelector
+  getTotalWeeklyHoursSelector,
 } from "./reducer/selectors";
 import Calendar from "./components/Calendar";
 import Form from "./components/Form";
@@ -17,6 +17,20 @@ import DailyTotals from "./components/DailyTotals";
 import { ToastsComponent } from "./components/Toasts";
 
 class App extends Component {
+  state = {
+    didInit: false,
+  };
+
+  onDialogToggle() {
+    this.setState({ didInit: true });
+
+    if (!this.state.didInit) {
+      this.props.fetchEvents(moment().startOf("week"), moment().endOf("week"));
+    }
+
+    this.props.toggleDialog();
+  }
+
   render() {
     const collapsedClass = this.props.dialog.collapsed
       ? "is-collapsed"
@@ -24,19 +38,19 @@ class App extends Component {
 
     const stats = [
       { label: "Promedio diario", value: this.props.log.dailyAverage },
-      { label: "Total semanal", value: this.props.log.weeklyTotal }
+      { label: "Total semanal", value: this.props.log.weeklyTotal },
     ];
 
     return (
       <div id="tangerine" className={`app ${collapsedClass}`}>
         <button
           className="btn-toggle btn btn-primary"
-          onClick={this.props.toggleDialog}
+          onClick={this.onDialogToggle}
         >
           {this.props.dialog.collapsed ? "Ver" : "Ocultar"} agenda
         </button>
 
-        {!this.props.dialog.collapsed &&
+        {!this.props.dialog.collapsed && (
           <div className="pane">
             <div className="flex-parent full-height">
               <div className="flex-extend full-height">
@@ -58,31 +72,30 @@ class App extends Component {
                 </div>
               </div>
 
-              {this.props.log.selectedEvent
-                ? <aside>
-                    <Form
-                      projects={this.props.projects}
-                      event={this.props.log.selectedEvent}
-                      saveNewEvent={this.props.saveNewEvent}
-                      updateEvent={this.props.updateEvent}
-                      deleteEvent={this.props.deleteEvent}
-                      saveEvent={this.props.saveEvent}
-                      setEditableEvent={this.props.updateEvent}
-                    />
-                  </aside>
-                : <aside>
-                    <div className="well well-xs">
-                      Seleccionar un rango para trackear. <br />
-                      <code>ctrl/command + arrastrar</code>
-                      {" "}
-                      copiar / continuar tarea
-                      {" "}
-                      <br />
-
-                    </div>
-                  </aside>}
+              {this.props.log.selectedEvent ? (
+                <aside>
+                  <Form
+                    projects={this.props.projects}
+                    event={this.props.log.selectedEvent}
+                    saveNewEvent={this.props.saveNewEvent}
+                    updateEvent={this.props.updateEvent}
+                    deleteEvent={this.props.deleteEvent}
+                    saveEvent={this.props.saveEvent}
+                    setEditableEvent={this.props.updateEvent}
+                  />
+                </aside>
+              ) : (
+                <aside>
+                  <div className="well well-xs">
+                    Seleccionar un rango para trackear. <br />
+                    <code>ctrl/command + arrastrar</code> copiar / continuar
+                    tarea <br />
+                  </div>
+                </aside>
+              )}
             </div>
-          </div>}
+          </div>
+        )}
         <ToastsComponent />
         {this.props.log.loading && <div className="loading-screen" />}
       </div>
@@ -99,8 +112,8 @@ export default connect(
         selectedEvent: selectedEventSelector(state),
         totals: getTotalsByDaySelector(state),
         weeklyTotal: getTotalWeeklyHoursSelector(state),
-        dailyAverage: getDailyAverageSelector(state)
-      }
+        dailyAverage: getDailyAverageSelector(state),
+      },
     };
   },
   { ...LogActions, ...DialogActions }

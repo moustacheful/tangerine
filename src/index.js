@@ -8,7 +8,6 @@ import ReactDOM from "react-dom";
 import Pomelo from "./lib/pomelo";
 import App from "./App";
 import reducer from "./reducer";
-import { Actions } from "./reducer/log";
 
 import "react-select/dist/react-select.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -20,10 +19,6 @@ const store = createStore(
     projects: Pomelo.getProjects(),
   },
   applyMiddleware(thunk)
-);
-
-store.dispatch(
-  Actions.fetchEvents(moment().startOf("week"), moment().endOf("week"))
 );
 
 const renderApp = () => {
