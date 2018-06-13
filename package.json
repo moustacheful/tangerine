@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "nwb build-react-app --no-vendor && npm run build-clean",
-    "build-clean": "rm dist/*.map && rm dist/index.html && mv dist/app*.css dist/main.css && mv dist/app*.js dist/main.js && mv dist/manifest*.js dist/manifest.js",
+    "build-clean": "rm dist/*.map && rm dist/index.html && mv dist/app*.css dist/main.min.css && mv dist/app*.js dist/main.min.js && mv dist/manifest*.js dist/manifest.min.js",
     "clean": "nwb clean-app",
     "start": "nwb serve-react-app --port 5000",
     "test": "nwb test-react",
