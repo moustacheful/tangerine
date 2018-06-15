@@ -13,7 +13,7 @@ import "react-select/dist/react-select.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./stylus/main.styl";
 
-(function() {
+document.addEventListener("DOMContentLoaded", function() {
   const store = createStore(
     reducer,
     {
@@ -40,4 +40,4 @@ import "./stylus/main.styl";
   if (module.hot) {
     module.hot.accept("./App", renderApp);
   }
-})();
+});
