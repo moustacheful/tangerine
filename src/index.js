@@ -13,29 +13,31 @@ import "react-select/dist/react-select.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./stylus/main.styl";
 
-const store = createStore(
-  reducer,
-  {
-    projects: Pomelo.getProjects(),
-  },
-  applyMiddleware(thunk)
-);
-
-const renderApp = () => {
-  ReactDOM.render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
-    document.getElementById("root")
+(function() {
+  const store = createStore(
+    reducer,
+    {
+      projects: Pomelo.getProjects(),
+    },
+    applyMiddleware(thunk)
   );
-};
 
-const root = document.createElement("div");
-root.id = "root";
-document.body.appendChild(root);
+  const renderApp = () => {
+    ReactDOM.render(
+      <Provider store={store}>
+        <App />
+      </Provider>,
+      document.getElementById("root")
+    );
+  };
 
-renderApp();
+  const root = document.createElement("div");
+  root.id = "root";
+  document.body.appendChild(root);
 
-if (module.hot) {
-  module.hot.accept("./App", renderApp);
-}
+  renderApp();
+
+  if (module.hot) {
+    module.hot.accept("./App", renderApp);
+  }
+})();
